@@ -63,7 +63,7 @@ class RecommendationEngine:
         metrics['risk_adjusted_score'] = risk_adjusted_score
         
         # Check Feasibility
-        metrics['is_feasible'] = metrics['expected_fill_rate'] >= self.min_service_level
+        metrics['is_feasible'] = bool(metrics['expected_fill_rate'] >= self.min_service_level)
         
         return metrics
 

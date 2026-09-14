@@ -9,13 +9,17 @@ from src.data_loader import load_m5_product_demand
 from src.supplier import Supplier
 from src.costs import CostConfig
 from src.recommendation_engine import RecommendationEngine
+from database import get_db_connection, init_db
+
+# Initialize database on startup
+init_db()
 
 app = FastAPI(title="DualSourceIQ API")
 
 # Allow CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to localhost:3000
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,9 +38,43 @@ class SimulationRequest(BaseModel):
     risk_aversion: float = 0.5
     min_service_level: float = 0.95
 
+class InventoryItem(BaseModel):
+    sku: str
+    name: str
+    on_hand_stock: int
+    reorder_point: int
+    order_quantity: int
+    holding_cost: float
+    backorder_cost: float
+
 @app.get("/")
 def read_root():
     return {"status": "API is running"}
+
+@app.get("/api/inventory")
+def get_inventory():
+    conn = get_db_connection()
+    items = conn.execute("SELECT * FROM inventory").fetchall()
+    conn.close()
+    return [dict(item) for item in items]
+
+@app.put("/api/inventory/{item_id}")
+def update_inventory(item_id: int, item: InventoryItem):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE inventory 
+        SET sku=?, name=?, on_hand_stock=?, reorder_point=?, order_quantity=?, holding_cost=?, backorder_cost=?
+        WHERE id=?
+    """, (item.sku, item.name, item.on_hand_stock, item.reorder_point, item.order_quantity, item.holding_cost, item.backorder_cost, item_id))
+    conn.commit()
+    
+    if cursor.rowcount == 0:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Item not found")
+        
+    conn.close()
+    return {"status": "success", "message": "Inventory updated"}
 
 @app.post("/api/simulate")
 def run_simulation(request: SimulationRequest):

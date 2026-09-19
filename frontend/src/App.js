@@ -175,53 +175,79 @@ function App() {
       {/* --- INVENTORY MANAGEMENT TAB --- */}
       {activeTab === 'inventory' && (
         <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-          <h3>Master Inventory Data</h3>
+          <h3>Inventory Data Management</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
             <thead>
-              <tr style={{ backgroundColor: '#f2f2f2', textAlign: 'left' }}>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>SKU</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Name</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>On-Hand</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Reorder Pt</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Order Qty</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Hold Cost</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Backorder Cost</th>
-                <th style={{ padding: '10px', border: '1px solid #ddd' }}>Actions</th>
+              <tr style={{ borderBottom: '2px solid #eee', textAlign: 'left', color: '#555' }}>
+                <th style={{ padding: '15px 10px' }}>Item</th>
+                <th style={{ padding: '15px 10px' }}>SKU</th>
+                <th style={{ padding: '15px 10px' }}>Current Stock</th>
+                <th style={{ padding: '15px 10px' }}>Reorder Level</th>
+                <th style={{ padding: '15px 10px' }}>Safety Stock</th>
+                <th style={{ padding: '15px 10px' }}>Status</th>
+                <th style={{ padding: '15px 10px' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {inventory.map((item) => (
-                <tr key={item.id}>
-                  {editingId === item.id ? (
-                    <>
-                      <td><input type="text" name="sku" value={editFormData.sku} onChange={handleEditChange} /></td>
-                      <td><input type="text" name="name" value={editFormData.name} onChange={handleEditChange} /></td>
-                      <td><input type="number" name="on_hand_stock" value={editFormData.on_hand_stock} onChange={handleEditChange} style={{width:'60px'}}/></td>
-                      <td><input type="number" name="reorder_point" value={editFormData.reorder_point} onChange={handleEditChange} style={{width:'60px'}}/></td>
-                      <td><input type="number" name="order_quantity" value={editFormData.order_quantity} onChange={handleEditChange} style={{width:'60px'}}/></td>
-                      <td><input type="number" name="holding_cost" step="0.01" value={editFormData.holding_cost} onChange={handleEditChange} style={{width:'60px'}}/></td>
-                      <td><input type="number" name="backorder_cost" step="0.01" value={editFormData.backorder_cost} onChange={handleEditChange} style={{width:'60px'}}/></td>
-                      <td>
-                        <button onClick={handleSaveClick} style={{ backgroundColor: 'green', color: 'white', cursor: 'pointer', marginRight: '5px' }}>Save</button>
-                        <button onClick={handleCancelClick} style={{ cursor: 'pointer' }}>Cancel</button>
+              {inventory.map((item) => {
+                // Calculate Status
+                let statusText = "Healthy";
+                let statusColor = "#2eec96"; // Green
+                
+                if (item.on_hand_stock <= item.safety_stock) {
+                    statusText = "At Risk";
+                    statusColor = "#f54242"; // Red
+                } else if (item.on_hand_stock <= item.reorder_point) {
+                    statusText = "Low Stock";
+                    statusColor = "#f59f42"; // Orange
+                }
+
+                return (
+                  <tr key={item.id} style={{ borderBottom: '1px solid #f2f2f2' }}>
+                    {editingId === item.id ? (
+                      <td colSpan="7" style={{ padding: '15px', backgroundColor: '#f9f9f9' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                          <label><strong>Name:</strong> <input type="text" name="name" value={editFormData.name} onChange={handleEditChange} style={{width:'90%'}} /></label>
+                          <label><strong>SKU:</strong> <input type="text" name="sku" value={editFormData.sku} onChange={handleEditChange} style={{width:'90%'}} /></label>
+                          <label><strong>Current Stock:</strong> <input type="number" name="on_hand_stock" value={editFormData.on_hand_stock} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                          <label><strong>Reorder Level:</strong> <input type="number" name="reorder_point" value={editFormData.reorder_point} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '15px' }}>
+                          <label><strong>Safety Stock:</strong> <input type="number" name="safety_stock" value={editFormData.safety_stock} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                          <label><strong>Order Qty:</strong> <input type="number" name="order_quantity" value={editFormData.order_quantity} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                          <label><strong>Holding Cost:</strong> <input type="number" name="holding_cost" step="0.01" value={editFormData.holding_cost} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                          <label><strong>Backorder Cost:</strong> <input type="number" name="backorder_cost" step="0.01" value={editFormData.backorder_cost} onChange={handleEditChange} style={{width:'90%'}}/></label>
+                        </div>
+                        <button onClick={handleSaveClick} style={{ backgroundColor: 'green', color: 'white', cursor: 'pointer', marginRight: '10px', padding: '5px 15px', border: 'none', borderRadius: '4px' }}>Save</button>
+                        <button onClick={handleCancelClick} style={{ cursor: 'pointer', padding: '5px 15px', border: '1px solid #ccc', borderRadius: '4px' }}>Cancel</button>
                       </td>
-                    </>
-                  ) : (
-                    <>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.sku}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.name}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.on_hand_stock}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.reorder_point}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.order_quantity}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>${item.holding_cost.toFixed(2)}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>${item.backorder_cost.toFixed(2)}</td>
-                      <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                        <button onClick={() => handleEditClick(item)} style={{ cursor: 'pointer' }}>Edit</button>
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
+                    ) : (
+                      <>
+                        <td style={{ padding: '15px 10px' }}>{item.name}</td>
+                        <td style={{ padding: '15px 10px', color: '#777' }}>{item.sku.substring(0, 15)}...</td>
+                        <td style={{ padding: '15px 10px' }}>{item.on_hand_stock}</td>
+                        <td style={{ padding: '15px 10px' }}>{item.reorder_point}</td>
+                        <td style={{ padding: '15px 10px' }}>{item.safety_stock}</td>
+                        <td style={{ padding: '15px 10px' }}>
+                          <span style={{ 
+                            display: 'inline-block', 
+                            width: '12px', 
+                            height: '12px', 
+                            backgroundColor: statusColor, 
+                            borderRadius: '50%', 
+                            marginRight: '8px',
+                            verticalAlign: 'middle'
+                          }}></span>
+                          {statusText}
+                        </td>
+                        <td style={{ padding: '15px 10px' }}>
+                          <button onClick={() => handleEditClick(item)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#007BFF', textDecoration: 'underline' }}>Edit / View</button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

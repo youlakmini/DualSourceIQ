@@ -43,6 +43,7 @@ class InventoryItem(BaseModel):
     name: str
     on_hand_stock: int
     reorder_point: int
+    safety_stock: int
     order_quantity: int
     holding_cost: float
     backorder_cost: float
@@ -64,9 +65,9 @@ def update_inventory(item_id: int, item: InventoryItem):
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE inventory 
-        SET sku=?, name=?, on_hand_stock=?, reorder_point=?, order_quantity=?, holding_cost=?, backorder_cost=?
+        SET sku=?, name=?, on_hand_stock=?, reorder_point=?, safety_stock=?, order_quantity=?, holding_cost=?, backorder_cost=?
         WHERE id=?
-    """, (item.sku, item.name, item.on_hand_stock, item.reorder_point, item.order_quantity, item.holding_cost, item.backorder_cost, item_id))
+    """, (item.sku, item.name, item.on_hand_stock, item.reorder_point, item.safety_stock, item.order_quantity, item.holding_cost, item.backorder_cost, item_id))
     conn.commit()
     
     if cursor.rowcount == 0:

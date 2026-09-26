@@ -27,6 +27,7 @@ def seed_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         sku TEXT UNIQUE NOT NULL,
         name TEXT NOT NULL,
+        category TEXT NOT NULL,
         on_hand_stock INTEGER DEFAULT 0,
         reorder_point INTEGER DEFAULT 50,
         safety_stock INTEGER DEFAULT 20,
@@ -77,9 +78,9 @@ def seed_database():
             backorder = 5.00
             
         cursor.execute('''
-            INSERT INTO inventory (sku, name, on_hand_stock, reorder_point, safety_stock, order_quantity, holding_cost, backorder_cost)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (sku, name, on_hand, reorder, safety, qty, holding, backorder))
+            INSERT INTO inventory (sku, name, category, on_hand_stock, reorder_point, safety_stock, order_quantity, holding_cost, backorder_cost)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (sku, name, cat, on_hand, reorder, safety, qty, holding, backorder))
         
     conn.commit()
     conn.close()

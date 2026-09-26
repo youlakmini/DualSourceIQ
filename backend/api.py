@@ -41,6 +41,7 @@ class SimulationRequest(BaseModel):
 class InventoryItem(BaseModel):
     sku: str
     name: str
+    category: str
     on_hand_stock: int
     reorder_point: int
     safety_stock: int
@@ -59,15 +60,31 @@ def get_inventory():
     conn.close()
     return [dict(item) for item in items]
 
+@app.post("/api/inventory")
+def create_inventory(item: InventoryItem):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO inventory (sku, name, category, on_hand_stock, reorder_point, safety_stock, order_quantity, holding_cost, backorder_cost)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (item.sku, item.name, item.category, item.on_hand_stock, item.reorder_point, item.safety_stock, item.order_quantity, item.holding_cost, item.backorder_cost))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        conn.close()
+        raise HTTPException(status_code=400, detail="SKU already exists")
+    conn.close()
+    return {"status": "success", "message": "Item created"}
+
 @app.put("/api/inventory/{item_id}")
 def update_inventory(item_id: int, item: InventoryItem):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
         UPDATE inventory 
-        SET sku=?, name=?, on_hand_stock=?, reorder_point=?, safety_stock=?, order_quantity=?, holding_cost=?, backorder_cost=?
+        SET sku=?, name=?, category=?, on_hand_stock=?, reorder_point=?, safety_stock=?, order_quantity=?, holding_cost=?, backorder_cost=?
         WHERE id=?
-    """, (item.sku, item.name, item.on_hand_stock, item.reorder_point, item.safety_stock, item.order_quantity, item.holding_cost, item.backorder_cost, item_id))
+    """, (item.sku, item.name, item.category, item.on_hand_stock, item.reorder_point, item.safety_stock, item.order_quantity, item.holding_cost, item.backorder_cost, item_id))
     conn.commit()
     
     if cursor.rowcount == 0:
@@ -76,6 +93,15 @@ def update_inventory(item_id: int, item: InventoryItem):
         
     conn.close()
     return {"status": "success", "message": "Inventory updated"}
+
+@app.delete("/api/inventory/{item_id}")
+def delete_inventory(item_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM inventory WHERE id=?", (item_id,))
+    conn.commit()
+    conn.close()
+    return {"status": "success", "message": "Item deleted"}
 
 @app.post("/api/simulate")
 def run_simulation(request: SimulationRequest):

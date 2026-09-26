@@ -123,6 +123,28 @@ function App() {
   };
 
   const handleAddSubmit = async () => {
+    // 1. Required Fields Validation
+    if (!addFormData.name.trim() || !addFormData.sku.trim()) {
+      alert("Error: Item Name and SKU are required.");
+      return;
+    }
+
+    // 2. Numeric Constraints (No negative numbers, Costs must be > 0)
+    if (addFormData.on_hand_stock < 0 || addFormData.reorder_point < 0 || addFormData.safety_stock < 0) {
+      alert("Error: Stock levels cannot be negative.");
+      return;
+    }
+    if (addFormData.holding_cost <= 0 || addFormData.backorder_cost <= 0) {
+      alert("Error: Holding Cost and Backorder Penalty must be greater than $0.00.");
+      return;
+    }
+
+    // 3. Business Logic
+    if (addFormData.safety_stock >= addFormData.reorder_point) {
+      alert("Error: Reorder Level must be strictly greater than Safety Stock.");
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:8000/api/inventory', {
         method: 'POST',
@@ -134,9 +156,9 @@ function App() {
         fetchInventory();
       } else { 
         const errorData = await response.json();
-        alert(errorData.detail || "Failed to add item."); 
+        alert(`Error: ${errorData.detail || "Failed to add item."}`); 
       }
-    } catch (err) { alert("Error adding item."); }
+    } catch (err) { alert("Error connecting to server."); }
   };
 
   // Filter Inventory based on Search
@@ -237,24 +259,24 @@ function App() {
               <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '8px', width: '500px' }}>
                 <h3 style={{ marginTop: '0', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>Add Inventory Item</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
-                  <label>Item Name:<br/><input type="text" name="name" onChange={handleAddChange} style={{width:'90%'}}/></label>
-                  <label>SKU:<br/><input type="text" name="sku" onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Item Name:<br/><input type="text" name="name" value={addFormData.name} onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>SKU:<br/><input type="text" name="sku" value={addFormData.sku} onChange={handleAddChange} style={{width:'90%'}}/></label>
                   <label>Category:<br/>
-                    <select name="category" onChange={handleAddChange} style={{width:'96%'}}>
+                    <select name="category" value={addFormData.category} onChange={handleAddChange} style={{width:'96%'}}>
                       <option value="FOODS">FOODS</option>
                       <option value="HOBBIES">HOBBIES</option>
                       <option value="HOUSEHOLD">HOUSEHOLD</option>
                     </select>
                   </label>
-                  <label>Current Stock:<br/><input type="number" name="on_hand_stock" onChange={handleAddChange} style={{width:'90%'}}/></label>
-                  <label>Reorder Level:<br/><input type="number" name="reorder_point" onChange={handleAddChange} style={{width:'90%'}}/></label>
-                  <label>Safety Stock:<br/><input type="number" name="safety_stock" onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Current Stock:<br/><input type="number" name="on_hand_stock" value={addFormData.on_hand_stock} onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Reorder Level:<br/><input type="number" name="reorder_point" value={addFormData.reorder_point} onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Safety Stock:<br/><input type="number" name="safety_stock" value={addFormData.safety_stock} onChange={handleAddChange} style={{width:'90%'}}/></label>
                 </div>
                 
                 <h4 style={{ borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>AI Simulation Parameters</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
-                  <label>Holding Cost ($):<br/><input type="number" step="0.01" name="holding_cost" onChange={handleAddChange} style={{width:'90%'}}/></label>
-                  <label>Backorder Penalty ($):<br/><input type="number" step="0.01" name="backorder_cost" onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Holding Cost ($):<br/><input type="number" step="0.01" name="holding_cost" value={addFormData.holding_cost} onChange={handleAddChange} style={{width:'90%'}}/></label>
+                  <label>Backorder Penalty ($):<br/><input type="number" step="0.01" name="backorder_cost" value={addFormData.backorder_cost} onChange={handleAddChange} style={{width:'90%'}}/></label>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

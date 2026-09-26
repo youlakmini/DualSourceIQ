@@ -102,6 +102,10 @@ function App() {
     } catch (err) { alert("Error saving item."); }
   };
 
+  const handleCancelClick = () => {
+    setEditingId(null);
+  };
+
   const handleDeleteClick = async (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
       try {

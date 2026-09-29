@@ -9,15 +9,13 @@ function App() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [params, setParams] = useState({
-    product_index: 0,
+    sku: "",
     regular_lead_time_mean: 7,
     regular_lead_time_std: 2.0,
     regular_unit_cost: 8.0,
     emergency_lead_time_mean: 2,
     emergency_lead_time_std: 0.0,
     emergency_unit_cost: 18.0,
-    holding_cost: 0.10,
-    backorder_cost: 5.00,
     risk_aversion: 0.5,
     min_service_level: 0.95
   });
@@ -34,16 +32,17 @@ function App() {
 
   // Fetch Inventory on load
   useEffect(() => {
-    if (activeTab === 'inventory') {
-      fetchInventory();
-    }
-  }, [activeTab]);
+    fetchInventory();
+  }, []);
 
   const fetchInventory = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/inventory');
       const data = await response.json();
       setInventory(data);
+      if (data.length > 0 && !params.sku) {
+          setParams(p => ({...p, sku: data[0].sku}));
+      }
     } catch (err) {
       console.error("Failed to fetch inventory:", err);
     }
@@ -191,10 +190,14 @@ function App() {
           <div style={{ flex: '1', border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
             <h3>Simulation Parameters</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              <label>Product Row Index: <input type="number" name="product_index" value={params.product_index} onChange={handleSimChange}/></label>
+              <label>Select Product: 
+                <select name="sku" value={params.sku} onChange={handleSimChange} style={{width:'100%', padding:'5px', marginTop:'5px'}}>
+                   {inventory.map(item => (
+                       <option key={item.sku} value={item.sku}>{item.name}</option>
+                   ))}
+                </select>
+              </label>
               <label>Risk Aversion (0-1): <input type="number" step="0.1" name="risk_aversion" value={params.risk_aversion} onChange={handleSimChange}/></label>
-              <label>Holding Cost ($): <input type="number" step="0.01" name="holding_cost" value={params.holding_cost} onChange={handleSimChange}/></label>
-              <label>Backorder Penalty ($): <input type="number" step="0.5" name="backorder_cost" value={params.backorder_cost} onChange={handleSimChange}/></label>
             </div>
             <h4 style={{ marginTop: '20px' }}>Regular Supplier</h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>

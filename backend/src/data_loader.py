@@ -4,31 +4,22 @@ import pandas as pd
 def load_m5_product_demand(
     file_path: str,
     row_index: int = 0,
-    number_of_days: int = 365
+    number_of_days: int = 365,
+    sku: str = None
 ):
-    """
-    Load one item-store demand series from M5.
-
-    Parameters
-    ----------
-    file_path:
-        Path to sales_train_evaluation.csv
-
-    row_index:
-        Which product/store row to select.
-
-    number_of_days:
-        Number of demand days to return.
-    """
-
     print("Loading M5 dataset...")
 
     df = pd.read_csv(file_path)
 
-    if row_index >= len(df):
-        raise ValueError("row_index is larger than dataset size.")
-
-    product = df.iloc[row_index]
+    if sku:
+        product_rows = df[df['id'] == sku]
+        if len(product_rows) == 0:
+            raise ValueError(f"SKU {sku} not found in M5 dataset.")
+        product = product_rows.iloc[0]
+    else:
+        if row_index >= len(df):
+            raise ValueError("row_index is larger than dataset size.")
+        product = df.iloc[row_index]
 
     day_columns = [
         column

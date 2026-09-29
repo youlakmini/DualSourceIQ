@@ -26,15 +26,13 @@ app.add_middleware(
 )
 
 class SimulationRequest(BaseModel):
-    product_index: int = 0
+    sku: str
     regular_lead_time_mean: int = 7
     regular_lead_time_std: float = 2.0
     regular_unit_cost: float = 8.0
     emergency_lead_time_mean: int = 2
     emergency_lead_time_std: float = 0.0
     emergency_unit_cost: float = 18.0
-    holding_cost: float = 0.10
-    backorder_cost: float = 5.00
     risk_aversion: float = 0.5
     min_service_level: float = 0.95
 
@@ -108,9 +106,20 @@ def run_simulation(request: SimulationRequest):
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         
+        # 1. Fetch costs from SQLite database based on SKU
+        conn = get_db_connection()
+        item_row = conn.execute("SELECT holding_cost, backorder_cost FROM inventory WHERE sku=?", (request.sku,)).fetchone()
+        conn.close()
+        
+        if not item_row:
+            raise HTTPException(status_code=404, detail=f"Product with SKU {request.sku} not found in database.")
+            
+        holding_cost = item_row['holding_cost']
+        backorder_cost = item_row['backorder_cost']
+        
         # Load demand
         data_path = os.path.join(base_dir, 'data', 'raw', 'sales_train_evaluation.csv')
-        base_demand, product_info = load_m5_product_demand(data_path, row_index=request.product_index, number_of_days=365)
+        base_demand, product_info = load_m5_product_demand(data_path, sku=request.sku, number_of_days=365)
         
         # Load error variance
         model_file = os.path.join(base_dir, 'experiments', 'xgboost_forecast.pkl')
@@ -138,8 +147,8 @@ def run_simulation(request: SimulationRequest):
         }
         
         costs = CostConfig(
-            holding_cost_per_unit_per_day=request.holding_cost, 
-            backorder_cost_per_unit_per_day=request.backorder_cost
+            holding_cost_per_unit_per_day=holding_cost, 
+            backorder_cost_per_unit_per_day=backorder_cost
         )
         
         # Run Engine

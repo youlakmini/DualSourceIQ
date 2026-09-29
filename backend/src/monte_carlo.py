@@ -17,19 +17,19 @@ def run_monte_carlo(
     policy,
     cost_config
 ):
-    print(f"Running {num_simulations} Monte Carlo simulations...")
-    
     std_dev = np.sqrt(error_variance)
-    
     results_list = []
     
+    # We will log the first 10 simulations of this plan to a text file
+    # (Logging all 1100 simulations across 11 plans creates too huge of a file)
+    log_content = []
+    ratio = getattr(policy, 'primary_ratio', 'Unknown')
+    log_content.append(f"=== PLAN: {int(ratio*100)}% Regular / {int((1-ratio)*100)}% Emergency ===")
+    
     for i in range(num_simulations):
-        # 1. Generate stochastic demand
-        # We add normally distributed noise to the base demand, ensuring demand doesn't go below 0
         noise = np.random.normal(0, std_dev, size=simulation_days)
         stochastic_demand = np.maximum(0, np.round(base_demand + noise))
         
-        # 2. Initialize simulator for this run
         simulator = InventorySimulator(
             initial_inventory=100,
             suppliers=suppliers,
@@ -37,9 +37,33 @@ def run_monte_carlo(
             cost_config=cost_config
         )
         
-        # 3. Run simulation
         result = simulator.run(stochastic_demand)
         results_list.append(result)
+        
+        # Only log first 5 simulations per plan to keep the file readable
+        if i < 5:
+            log_content.append(f"\nSimulation {i+1} (365 Days)")
+            log_content.append(f"Total Yearly Demand = {result['total_demand']} units")
+            
+            # Lead time logging
+            if 'regular' in result['max_lead_times'] and result['max_lead_times']['regular'] > 0:
+                log_content.append(f"Max Delay for Regular Supplier = {result['max_lead_times']['regular']} days")
+            if 'emergency' in result['max_lead_times'] and result['max_lead_times']['emergency'] > 0:
+                log_content.append(f"Max Delay for Emergency Supplier = {result['max_lead_times']['emergency']} days")
+                
+            if result['fill_rate'] < 1.0:
+                log_content.append(f"→ Stockout occurred (Fill Rate: {result['fill_rate']*100:.2f}%)")
+            else:
+                log_content.append(f"→ No stockouts occurred (100% Fill Rate)")
+            log_content.append(f"→ Total Cost = ${result['total_cost']:,.2f}")
+
+    # Append to the log file
+    log_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "simulation_logs.txt")
+    
+    # If this is the 100% regular plan (first run), overwrite the file to start fresh. Otherwise, append.
+    mode = 'w' if ratio == 1.0 else 'a'
+    with open(log_file_path, mode, encoding='utf-8') as f:
+        f.write("\n".join(log_content) + "\n\n")
         
     return results_list
 

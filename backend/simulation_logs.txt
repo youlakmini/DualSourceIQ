@@ -1,0 +1,352 @@
+=== PLAN: 100% Regular / 0% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 491 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,322.10
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 539 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,359.50
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 575 units
+Number of Orders Placed = 6
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,978.90
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 503 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,269.80
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 528 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,203.10
+
+=== PLAN: 90% Regular / 9% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 554 units
+Number of Orders Placed = 12
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,764.70
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 479 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,820.20
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 523 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,843.90
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 519 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,669.30
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 464 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $7,898.10
+
+=== PLAN: 80% Regular / 19% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 478 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,288.60
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 460 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,291.50
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 492 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,530.30
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 534 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,481.70
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 557 units
+Number of Orders Placed = 12
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,281.30
+
+=== PLAN: 70% Regular / 30% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 520 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,905.60
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 534 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,754.40
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 546 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,948.10
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 452 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,855.70
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 490 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $8,975.70
+
+=== PLAN: 60% Regular / 40% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 558 units
+Number of Orders Placed = 12
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,590.80
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 477 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,306.70
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 501 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,297.30
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 528 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,357.80
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 526 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,380.70
+
+=== PLAN: 50% Regular / 50% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 521 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,873.50
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 545 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,840.70
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 490 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,926.70
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 483 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,940.70
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 514 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,998.80
+
+=== PLAN: 40% Regular / 60% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 558 units
+Number of Orders Placed = 12
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,845.70
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 487 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,419.00
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 515 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,407.30
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 453 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,382.20
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 529 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,350.40
+
+=== PLAN: 30% Regular / 70% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 488 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,052.10
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 488 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,023.20
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 491 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,939.70
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 446 units
+Number of Orders Placed = 8
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $9,388.50
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 500 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,938.90
+
+=== PLAN: 20% Regular / 80% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 521 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,445.50
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 500 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,645.20
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 481 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,498.20
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 457 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,448.20
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 478 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,447.20
+
+=== PLAN: 10% Regular / 90% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 487 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,979.10
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 498 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,932.10
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 564 units
+Number of Orders Placed = 12
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $13,601.60
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 513 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $11,977.10
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 489 units
+Number of Orders Placed = 10
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,076.90
+
+=== PLAN: 0% Regular / 100% Emergency ===
+
+Simulation 1 (365 Days)
+Total Yearly Demand = 481 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,429.30
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 529 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,532.00
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 455 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,524.20
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 495 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,522.40
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 481 units
+Number of Orders Placed = 5
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $12,501.90
+

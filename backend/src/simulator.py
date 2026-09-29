@@ -30,6 +30,8 @@ class InventorySimulator:
         self.total_units_ordered = 0
         self.number_of_orders = 0
 
+        self.max_lead_times = {key: 0 for key in self.suppliers.keys()}
+
         self.inventory_history = []
         self.backorder_history = []
 
@@ -118,7 +120,11 @@ class InventorySimulator:
                 continue
 
             supplier = self.suppliers[supplier_key]
-            arrival_day = day + supplier.get_lead_time()
+            actual_lead_time = supplier.get_lead_time()
+            arrival_day = day + actual_lead_time
+            
+            if actual_lead_time > self.max_lead_times.get(supplier_key, 0):
+                self.max_lead_times[supplier_key] = actual_lead_time
 
             order = PipelineOrder(
                 quantity=quantity,
@@ -225,6 +231,9 @@ class InventorySimulator:
 
             "number_of_orders":
                 self.number_of_orders,
+
+            "max_lead_times": 
+                self.max_lead_times,
 
             "purchase_cost":
                 self.total_purchase_cost,

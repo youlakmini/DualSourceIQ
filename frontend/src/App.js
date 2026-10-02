@@ -51,7 +51,8 @@ function App() {
   // --- Simulation Handlers ---
   const handleSimChange = (e) => {
     const { name, value } = e.target;
-    setParams({ ...params, [name]: parseFloat(value) });
+    const parsedValue = name === 'sku' ? value : (value === '' ? '' : parseFloat(value));
+    setParams({ ...params, [name]: parsedValue });
   };
 
   const runSimulation = async () => {

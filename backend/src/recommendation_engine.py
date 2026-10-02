@@ -52,12 +52,9 @@ class RecommendationEngine:
         metrics = calculate_risk_metrics(results, cvar_alpha=0.05)
         
         # Calculate Risk-Adjusted Score
-        # Formula: (1 - risk_aversion) * Expected Cost + (risk_aversion) * CVaR
+        # Formula: Expected Cost + (risk_aversion * CVaR)
         # Lower score is better
-        risk_adjusted_score = (
-            (1 - self.risk_aversion) * metrics['expected_cost'] +
-            (self.risk_aversion) * metrics['cvar']
-        )
+        risk_adjusted_score = metrics['expected_cost'] + (self.risk_aversion * metrics['cvar'])
         
         metrics['primary_ratio'] = primary_ratio
         metrics['risk_adjusted_score'] = risk_adjusted_score

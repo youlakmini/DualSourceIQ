@@ -106,9 +106,9 @@ def run_simulation(request: SimulationRequest):
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         
-        # 1. Fetch costs from SQLite database based on SKU
+        # 1. Fetch parameters from SQLite database based on SKU
         conn = get_db_connection()
-        item_row = conn.execute("SELECT holding_cost, backorder_cost FROM inventory WHERE sku=?", (request.sku,)).fetchone()
+        item_row = conn.execute("SELECT holding_cost, backorder_cost, reorder_point, order_quantity FROM inventory WHERE sku=?", (request.sku,)).fetchone()
         conn.close()
         
         if not item_row:
@@ -116,6 +116,8 @@ def run_simulation(request: SimulationRequest):
             
         holding_cost = item_row['holding_cost']
         backorder_cost = item_row['backorder_cost']
+        reorder_point = item_row['reorder_point']
+        order_quantity = item_row['order_quantity']
         
         # Load demand
         data_path = os.path.join(base_dir, 'data', 'raw', 'sales_train_evaluation.csv')
@@ -157,6 +159,8 @@ def run_simulation(request: SimulationRequest):
             error_variance=error_var,
             suppliers=suppliers,
             cost_config=costs,
+            reorder_point=reorder_point,
+            order_quantity=order_quantity,
             num_simulations=100,
             risk_aversion=request.risk_aversion,
             min_service_level=request.min_service_level

@@ -15,6 +15,8 @@ class RecommendationEngine:
         error_variance,
         suppliers,
         cost_config,
+        reorder_point=50,
+        order_quantity=100,
         num_simulations=100,
         risk_aversion=0.5, # 0 = only care about average cost, 1 = heavily penalize CVaR risk
         min_service_level=0.95
@@ -23,6 +25,8 @@ class RecommendationEngine:
         self.error_variance = error_variance
         self.suppliers = suppliers
         self.cost_config = cost_config
+        self.reorder_point = reorder_point
+        self.order_quantity = order_quantity
         self.num_simulations = num_simulations
         self.risk_aversion = risk_aversion
         self.min_service_level = min_service_level
@@ -34,8 +38,8 @@ class RecommendationEngine:
 
     def evaluate_plan(self, primary_ratio):
         policy = DualSourcingPolicy(
-            reorder_point=50,
-            order_quantity=100,
+            reorder_point=self.reorder_point,
+            order_quantity=self.order_quantity,
             primary_ratio=primary_ratio
         )
         

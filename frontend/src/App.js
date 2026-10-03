@@ -228,6 +228,9 @@ function App() {
                   <p>Expected Cost: ${results.best_plan.expected_cost.toFixed(2)}</p>
                   <p>Risk (CVaR): ${results.best_plan.cvar.toFixed(2)}</p>
                   <p>Service Level: {(results.best_plan.expected_fill_rate * 100).toFixed(2)}%</p>
+                  <p style={{ marginTop: '15px', fontWeight: 'bold' }}>
+                    Objective Score : {results.best_plan.risk_adjusted_score.toFixed(2)}
+                  </p>
                 </div>
               </div>
             )}

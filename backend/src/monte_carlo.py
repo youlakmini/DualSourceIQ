@@ -101,11 +101,20 @@ def calculate_risk_metrics(results_list, cvar_alpha=0.05):
     print(f"Cost CVaR (Worst 5%): ${cvar:,.2f}")
     print("="*45)
     
+    avg_yearly_demand = df_results['total_demand'].mean()
+    
+    # Extract max lead times safely
+    max_regular_delay = max([r.get('max_lead_times', {}).get('regular', 0) for r in results_list]) if results_list else 0
+    max_emergency_delay = max([r.get('max_lead_times', {}).get('emergency', 0) for r in results_list]) if results_list else 0
+    
     return {
-        "expected_cost": expected_cost,
-        "expected_fill_rate": expected_fill_rate,
-        "stockout_prob": stockout_prob,
-        "cvar": cvar
+        "expected_cost": float(expected_cost),
+        "expected_fill_rate": float(expected_fill_rate),
+        "stockout_prob": float(stockout_prob),
+        "cvar": float(cvar),
+        "average_yearly_demand": float(avg_yearly_demand),
+        "max_regular_delay": int(max_regular_delay),
+        "max_emergency_delay": int(max_emergency_delay)
     }
 
 if __name__ == "__main__":

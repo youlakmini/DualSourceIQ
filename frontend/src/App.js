@@ -56,6 +56,24 @@ function App() {
   };
 
   const runSimulation = async () => {
+    // --- Front-end Validations ---
+    if (params.risk_aversion < 0 || params.risk_aversion > 1) {
+      alert("Error: Risk Aversion must be between 0 and 1.");
+      return;
+    }
+    if (params.regular_unit_cost <= 0 || params.emergency_unit_cost <= 0) {
+      alert("Error: Supplier Costs must be greater than $0.");
+      return;
+    }
+    if (params.regular_lead_time_mean < 0 || params.emergency_lead_time_mean < 0) {
+      alert("Error: Supplier Lead Times cannot be negative.");
+      return;
+    }
+    if (params.regular_lead_time_std < 0 || params.emergency_lead_time_std < 0) {
+      alert("Error: Standard Deviation cannot be negative.");
+      return;
+    }
+
     setLoading(true); setError(null); setResults(null);
     try {
       const response = await fetch('http://localhost:8000/api/simulate', {
@@ -198,19 +216,19 @@ function App() {
                    ))}
                 </select>
               </label>
-              <label>Risk Aversion (0-1): <input type="number" step="0.1" name="risk_aversion" value={params.risk_aversion} onChange={handleSimChange}/></label>
+              <label>Risk Aversion (0-1): <input type="number" step="0.1" min="0" max="1" name="risk_aversion" value={params.risk_aversion} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
             </div>
             <h4 style={{ marginTop: '20px' }}>Regular Supplier</h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-               <label>Cost ($): <input type="number" name="regular_unit_cost" value={params.regular_unit_cost} onChange={handleSimChange}/></label>
-               <label>Lead Time: <input type="number" name="regular_lead_time_mean" value={params.regular_lead_time_mean} onChange={handleSimChange}/></label>
-               <label>Std Dev: <input type="number" step="0.5" name="regular_lead_time_std" value={params.regular_lead_time_std} onChange={handleSimChange}/></label>
+               <label>Cost ($): <input type="number" min="0" name="regular_unit_cost" value={params.regular_unit_cost} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
+               <label>Lead Time: <input type="number" min="0" name="regular_lead_time_mean" value={params.regular_lead_time_mean} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
+               <label>Std Dev: <input type="number" step="0.5" min="0" name="regular_lead_time_std" value={params.regular_lead_time_std} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
             </div>
             <h4 style={{ marginTop: '20px' }}>Emergency Supplier</h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-               <label>Cost ($): <input type="number" name="emergency_unit_cost" value={params.emergency_unit_cost} onChange={handleSimChange}/></label>
-               <label>Lead Time: <input type="number" name="emergency_lead_time_mean" value={params.emergency_lead_time_mean} onChange={handleSimChange}/></label>
-               <label>Std Dev: <input type="number" step="0.5" name="emergency_lead_time_std" value={params.emergency_lead_time_std} onChange={handleSimChange}/></label>
+               <label>Cost ($): <input type="number" min="0" name="emergency_unit_cost" value={params.emergency_unit_cost} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
+               <label>Lead Time: <input type="number" min="0" name="emergency_lead_time_mean" value={params.emergency_lead_time_mean} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
+               <label>Std Dev: <input type="number" step="0.5" min="0" name="emergency_lead_time_std" value={params.emergency_lead_time_std} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
             </div>
             <button onClick={runSimulation} disabled={loading} style={{ marginTop: '20px', padding: '10px', cursor: 'pointer' }}>
               {loading ? 'Running AI Engine...' : 'Run Risk-Aware Simulation'}
@@ -229,8 +247,16 @@ function App() {
                   <p>Risk (CVaR): ${results.best_plan.cvar.toFixed(2)}</p>
                   <p>Service Level: {(results.best_plan.expected_fill_rate * 100).toFixed(2)}%</p>
                   <p style={{ marginTop: '15px', fontWeight: 'bold' }}>
-                    Objective Score : {results.best_plan.risk_adjusted_score.toFixed(2)}
+                    Objective Score (E[Cost] + λ*CVaR): {results.best_plan.risk_adjusted_score.toFixed(2)}
                   </p>
+                </div>
+                
+                <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#fdfd96', borderLeft: '6px solid #f39c12' }}>
+                  <h4 style={{ margin: '0 0 10px 0' }}>Simulation Insights (100 Runs)</h4>
+                  <p style={{ margin: '5px 0', fontSize: '14px' }}>Average Yearly Demand: {Math.round(results.best_plan.average_yearly_demand)} units</p>
+                  <p style={{ margin: '5px 0', fontSize: '14px' }}>Max Delay (Regular Supplier): {results.best_plan.max_regular_delay} days</p>
+                  <p style={{ margin: '5px 0', fontSize: '14px' }}>Max Delay (Emergency Supplier): {results.best_plan.max_emergency_delay} days</p>
+                  <p style={{ margin: '5px 0', fontSize: '14px' }}>Stockout Probability: {(results.best_plan.stockout_prob * 100).toFixed(1)}%</p>
                 </div>
               </div>
             )}

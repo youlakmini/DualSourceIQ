@@ -62,6 +62,14 @@ function App() {
       alert("Error: Risk Aversion must be between 0 and 1.");
       return;
     }
+    if (params.demand_modifier_pct <= -100) {
+      alert("Error: Demand Change cannot be -100% or lower (demand cannot be negative).");
+      return;
+    }
+    if (params.demand_modifier_pct > 500) {
+      alert("Error: Demand Change is too high. Please keep it under +500%.");
+      return;
+    }
     if (params.regular_unit_cost <= 0 || params.emergency_unit_cost <= 0) {
       alert("Error: Supplier Costs must be greater than $0.");
       return;
@@ -283,7 +291,7 @@ function App() {
                 </select>
               </label>
               <label>Risk Aversion (0-1): <input type="number" step="0.1" min="0" max="1" name="risk_aversion" value={params.risk_aversion} onChange={handleSimChange} style={{width:'100%', padding:'5px', marginTop:'5px'}}/></label>
-              <label>Demand Change (%): <input type="number" step="1" name="demand_modifier_pct" value={params.demand_modifier_pct} onChange={handleSimChange} placeholder="e.g. 20 for +20%" style={{width:'100%', padding:'5px', marginTop:'5px'}}/></label>
+              <label>Demand Change (%): <input type="number" step="1" min="-99" max="500" name="demand_modifier_pct" value={params.demand_modifier_pct} onChange={handleSimChange} placeholder="e.g. 20 for +20%" style={{width:'100%', padding:'5px', marginTop:'5px'}}/></label>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
               <div>

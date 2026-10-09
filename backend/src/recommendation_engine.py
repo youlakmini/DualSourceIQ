@@ -90,7 +90,10 @@ class RecommendationEngine:
         best_plan = ranked_plans[0]
         
         self._print_recommendation(best_plan, ranked_plans)
-        return best_plan
+        return {
+            "best_plan": best_plan,
+            "all_plans": evaluated_plans
+        }
 
     def _print_recommendation(self, best_plan, all_ranked):
         primary_pct = int(best_plan['primary_ratio'] * 100)

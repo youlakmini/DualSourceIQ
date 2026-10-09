@@ -17,6 +17,7 @@ function App() {
     emergency_lead_time_std: 0.0,
     emergency_unit_cost: 18.0,
     risk_aversion: 0.5,
+    demand_modifier_pct: 0,
     min_service_level: 0.95
   });
 
@@ -218,6 +219,9 @@ function App() {
               </label>
               <label>Risk Aversion (0-1): <input type="number" step="0.1" min="0" max="1" name="risk_aversion" value={params.risk_aversion} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px', marginTop: '10px' }}>
+              <label>Demand Change (%): <input type="number" step="1" name="demand_modifier_pct" value={params.demand_modifier_pct} onChange={handleSimChange} placeholder="e.g. 20 for +20%"/></label>
+            </div>
             <h4 style={{ marginTop: '20px' }}>Regular Supplier</h4>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                <label>Cost ($): <input type="number" min="0" name="regular_unit_cost" value={params.regular_unit_cost} onChange={handleSimChange} onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}/></label>
@@ -258,6 +262,40 @@ function App() {
                   <p style={{ margin: '5px 0', fontSize: '14px' }}>Max Delay (Emergency Supplier): {results.best_plan.max_emergency_delay} days</p>
                   <p style={{ margin: '5px 0', fontSize: '14px' }}>Stockout Probability: {(results.best_plan.stockout_prob * 100).toFixed(1)}%</p>
                 </div>
+                
+                {results.all_plans && (
+                  <div style={{ marginTop: '20px' }}>
+                    <h4>Compare Sourcing Strategies (UC05.1)</h4>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#f2f2f2', textAlign: 'left' }}>
+                          <th style={{ padding: '8px', border: '1px solid #ddd' }}>Strategy (Reg/Emg)</th>
+                          <th style={{ padding: '8px', border: '1px solid #ddd' }}>Expected Cost</th>
+                          <th style={{ padding: '8px', border: '1px solid #ddd' }}>Service Level</th>
+                          <th style={{ padding: '8px', border: '1px solid #ddd' }}>Risk Score</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {results.all_plans.filter(p => p.primary_ratio === 1.0 || p.primary_ratio === 0.0 || p.primary_ratio === 0.5 || p.primary_ratio === results.best_plan.primary_ratio).map((plan, idx) => {
+                          const isBest = plan.primary_ratio === results.best_plan.primary_ratio;
+                          const name = plan.primary_ratio === 1.0 ? 'Reg Only (100/0)' : 
+                                       plan.primary_ratio === 0.0 ? 'Emg Only (0/100)' : 
+                                       plan.primary_ratio === 0.5 ? 'Balanced (50/50)' : 
+                                       `Risk-Aware (${Math.round(plan.primary_ratio*100)}/${Math.round((1-plan.primary_ratio)*100)})`;
+                          
+                          return (
+                            <tr key={idx} style={{ backgroundColor: isBest ? '#e7f3fe' : 'transparent', fontWeight: isBest ? 'bold' : 'normal' }}>
+                              <td style={{ padding: '8px', border: '1px solid #ddd' }}>{name} {isBest ? '⭐' : ''}</td>
+                              <td style={{ padding: '8px', border: '1px solid #ddd' }}>${plan.expected_cost.toFixed(2)}</td>
+                              <td style={{ padding: '8px', border: '1px solid #ddd' }}>{(plan.expected_fill_rate * 100).toFixed(1)}%</td>
+                              <td style={{ padding: '8px', border: '1px solid #ddd' }}>{plan.risk_adjusted_score.toFixed(2)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
           </div>

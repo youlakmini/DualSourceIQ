@@ -27,6 +27,7 @@ app.add_middleware(
 
 class SimulationRequest(BaseModel):
     sku: str
+    demand_modifier_pct: int = 0
     regular_lead_time_mean: int = 7
     regular_lead_time_std: float = 2.0
     regular_unit_cost: float = 8.0
@@ -123,6 +124,10 @@ def run_simulation(request: SimulationRequest):
         data_path = os.path.join(base_dir, 'data', 'raw', 'sales_train_evaluation.csv')
         base_demand, product_info = load_m5_product_demand(data_path, sku=request.sku, number_of_days=365)
         
+        # Apply Demand Modifier
+        if request.demand_modifier_pct != 0:
+            base_demand = base_demand * (1 + (request.demand_modifier_pct / 100.0))
+            
         # Load error variance
         model_file = os.path.join(base_dir, 'experiments', 'xgboost_forecast.pkl')
         try:

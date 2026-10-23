@@ -14,11 +14,28 @@ function App() {
   // Navigation State (defaults to 'inventory')
   const [activeTab, setActiveTab] = useState('inventory');
   
-  // Simulation State
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState(null);
-  const [error, setError] = useState(null);
-  const [params, setParams] = useState({
+  // --- Simulation (Supplier Parameters) State (UC07) ---
+  const [simLoading, setSimLoading] = useState(false);
+  const [simResults, setSimResults] = useState(null);
+  const [simError, setSimError] = useState(null);
+  const [simParams, setSimParams] = useState({
+    sku: "",
+    regular_lead_time_mean: 7,
+    regular_lead_time_std: 2.0,
+    regular_unit_cost: 8.0,
+    emergency_lead_time_mean: 2,
+    emergency_lead_time_std: 0.0,
+    emergency_unit_cost: 18.0,
+    risk_aversion: 0.5,
+    demand_modifier_pct: 0,
+    min_service_level: 0.95
+  });
+
+  // --- What-If Analysis State (UC05) ---
+  const [whatIfLoading, setWhatIfLoading] = useState(false);
+  const [whatIfResults, setWhatIfResults] = useState(null);
+  const [whatIfError, setWhatIfError] = useState(null);
+  const [whatIfParams, setWhatIfParams] = useState({
     sku: "",
     regular_lead_time_mean: 7,
     regular_lead_time_std: 2.0,
@@ -60,67 +77,114 @@ function App() {
       const response = await fetch('http://localhost:8000/api/inventory');
       const data = await response.json();
       setInventory(data);
-      if (data.length > 0 && !params.sku) {
-        setParams(p => ({ ...p, sku: data[0].sku }));
+      if (data.length > 0) {
+        setSimParams(p => ({ ...p, sku: p.sku || data[0].sku }));
+        setWhatIfParams(p => ({ ...p, sku: p.sku || data[0].sku }));
       }
     } catch (err) {
       console.error("Failed to fetch inventory:", err);
     }
   };
 
-  // --- Simulation Handlers ---
+  // --- Independent Simulation Handlers (UC07) ---
   const handleSimChange = (e) => {
     const { name, value } = e.target;
     const parsedValue = name === 'sku' ? value : (value === '' ? '' : parseFloat(value));
-    setParams({ ...params, [name]: parsedValue });
+    setSimParams(prev => ({ ...prev, [name]: parsedValue }));
   };
 
   const runSimulation = async () => {
-    // --- Front-end Validations ---
-    if (params.risk_aversion < 0 || params.risk_aversion > 1) {
+    if (simParams.risk_aversion < 0 || simParams.risk_aversion > 1) {
       alert("Error: Risk Aversion must be between 0 and 1.");
       return;
     }
-    if (params.demand_modifier_pct <= -100) {
-      alert("Error: Demand Change cannot be -100% or lower (demand cannot be negative).");
-      return;
-    }
-    if (params.demand_modifier_pct > 500) {
-      alert("Error: Demand Change is too high. Please keep it under +500%.");
-      return;
-    }
-    if (params.regular_unit_cost <= 0 || params.emergency_unit_cost <= 0) {
+    if (simParams.regular_unit_cost <= 0 || simParams.emergency_unit_cost <= 0) {
       alert("Error: Supplier Costs must be greater than $0.");
       return;
     }
-    if (params.regular_lead_time_mean < 0 || params.emergency_lead_time_mean < 0) {
+    if (simParams.regular_lead_time_mean < 0 || simParams.emergency_lead_time_mean < 0) {
       alert("Error: Supplier Lead Times cannot be negative.");
       return;
     }
-    if (params.regular_lead_time_std < 0 || params.emergency_lead_time_std < 0) {
+    if (simParams.regular_lead_time_std < 0 || simParams.emergency_lead_time_std < 0) {
       alert("Error: Standard Deviation cannot be negative.");
       return;
     }
 
-    setLoading(true); 
-    setError(null); 
-    setResults(null);
+    setSimLoading(true); 
+    setSimError(null); 
+    setSimResults(null);
     try {
       const response = await fetch('http://localhost:8000/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(params),
+        body: JSON.stringify(simParams),
       });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || 'Simulation failed');
       }
       const data = await response.json();
-      setResults(data);
+      setSimResults(data);
     } catch (err) {
-      setError(err.message);
+      setSimError(err.message);
     } finally {
-      setLoading(false);
+      setSimLoading(false);
+    }
+  };
+
+  // --- Independent What-If Handlers (UC05) ---
+  const handleWhatIfChange = (e) => {
+    const { name, value } = e.target;
+    const parsedValue = name === 'sku' ? value : (value === '' ? '' : parseFloat(value));
+    setWhatIfParams(prev => ({ ...prev, [name]: parsedValue }));
+  };
+
+  const runWhatIfSimulation = async () => {
+    if (whatIfParams.risk_aversion < 0 || whatIfParams.risk_aversion > 1) {
+      alert("Error: Risk Aversion must be between 0 and 1.");
+      return;
+    }
+    if (whatIfParams.demand_modifier_pct <= -100) {
+      alert("Error: Demand Change cannot be -100% or lower (demand cannot be negative).");
+      return;
+    }
+    if (whatIfParams.demand_modifier_pct > 500) {
+      alert("Error: Demand Change is too high. Please keep it under +500%.");
+      return;
+    }
+    if (whatIfParams.regular_unit_cost <= 0 || whatIfParams.emergency_unit_cost <= 0) {
+      alert("Error: Supplier Costs must be greater than $0.");
+      return;
+    }
+    if (whatIfParams.regular_lead_time_mean < 0 || whatIfParams.emergency_lead_time_mean < 0) {
+      alert("Error: Supplier Lead Times cannot be negative.");
+      return;
+    }
+    if (whatIfParams.regular_lead_time_std < 0 || whatIfParams.emergency_lead_time_std < 0) {
+      alert("Error: Standard Deviation cannot be negative.");
+      return;
+    }
+
+    setWhatIfLoading(true); 
+    setWhatIfError(null); 
+    setWhatIfResults(null);
+    try {
+      const response = await fetch('http://localhost:8000/api/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(whatIfParams),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Simulation failed');
+      }
+      const data = await response.json();
+      setWhatIfResults(data);
+    } catch (err) {
+      setWhatIfError(err.message);
+    } finally {
+      setWhatIfLoading(false);
     }
   };
 
@@ -280,24 +344,24 @@ function App() {
 
           {activeTab === 'simulation' && (
             <SimulationView
-              params={params}
+              params={simParams}
               handleSimChange={handleSimChange}
               runSimulation={runSimulation}
-              loading={loading}
-              error={error}
-              results={results}
+              loading={simLoading}
+              error={simError}
+              results={simResults}
               inventory={inventory}
             />
           )}
 
           {activeTab === 'whatif' && (
             <WhatIfView
-              params={params}
-              handleSimChange={handleSimChange}
-              runSimulation={runSimulation}
-              loading={loading}
-              error={error}
-              results={results}
+              params={whatIfParams}
+              handleSimChange={handleWhatIfChange}
+              runSimulation={runWhatIfSimulation}
+              loading={whatIfLoading}
+              error={whatIfError}
+              results={whatIfResults}
               inventory={inventory}
             />
           )}

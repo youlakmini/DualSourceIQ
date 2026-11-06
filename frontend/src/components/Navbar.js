@@ -1,14 +1,18 @@
 import React from 'react';
-import { CubeIcon, BellIcon, UserIcon } from './Icons';
+import { DualSourceIQLogo, BellIcon, UserIcon } from './Icons';
 
 function Navbar() {
   return (
     <header className="top-navbar">
       <div className="brand-section">
-        <div className="brand-logo-icon">
-          <CubeIcon />
+        <DualSourceIQLogo size={32} />
+        <div className="brand-text-wrapper">
+          <span className="brand-title">
+            DualSource<span className="brand-accent">IQ</span>
+          </span>
+          <span className="brand-divider">|</span>
+          <span className="brand-subtitle">Smart Dual-Supplier Decision Support</span>
         </div>
-        <span className="brand-title">Smart Dual-Supplier Inventory Decision Support System</span>
       </div>
       <div className="navbar-actions">
         <button className="notification-btn" title="Notifications">

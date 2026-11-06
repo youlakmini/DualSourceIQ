@@ -1,5 +1,52 @@
 import React from 'react';
 
+export const DualSourceIQLogo = ({ size = 28, className = '' }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 64 64"
+    fill="none"
+    className={className}
+    style={{ display: 'block', flexShrink: 0 }}
+  >
+    <defs>
+      <linearGradient id="navBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#1e293b" />
+        <stop offset="100%" stopColor="#0f172a" />
+      </linearGradient>
+      <linearGradient id="navTopFace" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#0284c7" />
+        <stop offset="100%" stopColor="#38bdf8" />
+      </linearGradient>
+      <linearGradient id="navLeftFace" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#2563eb" />
+        <stop offset="100%" stopColor="#1d4ed8" />
+      </linearGradient>
+      <linearGradient id="navRightFace" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#6366f1" />
+        <stop offset="100%" stopColor="#4338ca" />
+      </linearGradient>
+    </defs>
+    <rect width="64" height="64" rx="14" fill="url(#navBgGrad)" />
+    <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" stroke="#38bdf8" strokeOpacity="0.4" strokeWidth="1.5" />
+    <path d="M 32 14 L 49 23 L 32 32 L 15 23 Z" fill="url(#navTopFace)" opacity="0.95" />
+    <path d="M 15 23 L 32 32 L 32 50 L 15 41 Z" fill="url(#navLeftFace)" />
+    <path d="M 32 32 L 49 23 L 49 41 L 32 50 Z" fill="url(#navRightFace)" />
+    <path d="M 32 14 L 49 23 L 32 32 L 15 23 Z" stroke="#7dd3fc" strokeWidth="0.8" strokeLinejoin="round" opacity="0.7" />
+    <line x1="32" y1="32" x2="32" y2="50" stroke="#93c5fd" strokeWidth="1.2" opacity="0.6" />
+    <path d="M 20 33 L 26 36 L 32 32" stroke="#38bdf8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M 44 33 L 38 36 L 32 32" stroke="#a5b4fc" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="20" cy="33" r="2.8" fill="#38bdf8" />
+    <circle cx="20" cy="33" r="1.3" fill="#ffffff" />
+    <circle cx="44" cy="33" r="2.8" fill="#818cf8" />
+    <circle cx="44" cy="33" r="1.3" fill="#ffffff" />
+    <circle cx="32" cy="32" r="3.6" fill="#ffffff" />
+    <circle cx="32" cy="32" r="1.8" fill="#0284c7" />
+    <circle cx="32" cy="23" r="1.8" fill="#ffffff" opacity="0.9" />
+    <line x1="32" y1="23" x2="32" y2="32" stroke="#ffffff" strokeWidth="1" strokeDasharray="1.5 1.5" opacity="0.75" />
+  </svg>
+);
+
 export const CubeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>

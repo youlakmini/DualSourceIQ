@@ -17,7 +17,7 @@ class RecommendationEngine:
         cost_config,
         reorder_point=50,
         order_quantity=100,
-        num_simulations=100,
+        num_simulations=500,
         risk_aversion=0.5, # 0 = only care about average cost, 1 = heavily penalize CVaR risk
         min_service_level=0.95
     ):

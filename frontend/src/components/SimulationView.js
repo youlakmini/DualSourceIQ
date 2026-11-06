@@ -80,7 +80,7 @@ function SimulationView({
 
         <div style={{ marginTop: 'auto', paddingTop: '6px' }}>
           <button className="btn-primary" onClick={runSimulation} disabled={loading} style={{ width: '100%', padding: '9px' }}>
-            {loading ? 'Running 100 Monte Carlo Iterations...' : 'Run Risk-Aware Simulation (UC07)'}
+            {loading ? 'Running 500 Monte Carlo Iterations...' : 'Run Risk-Aware Simulation (UC07)'}
           </button>
           {error && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '6px', margin: '6px 0 0 0' }}>Error: {error}</p>}
         </div>
@@ -138,7 +138,7 @@ function SimulationView({
             {/* Amber Simulation Insights */}
             <div style={{ padding: '12px 16px', backgroundColor: '#fffbeb', borderRadius: '6px', borderLeft: '4px solid #f59e0b' }}>
               <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#92400e', fontWeight: '700' }}>
-                Simulation Insights (100 Monte Carlo Runs)
+                Simulation Insights (500 Monte Carlo Runs)
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px', color: '#78350f' }}>
                 <div>Average Yearly Demand: <strong>{Math.round(results.best_plan.average_yearly_demand)} units</strong></div>

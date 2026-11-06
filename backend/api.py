@@ -166,7 +166,7 @@ def run_simulation(request: SimulationRequest):
             cost_config=costs,
             reorder_point=reorder_point,
             order_quantity=order_quantity,
-            num_simulations=100,
+            num_simulations=500,
             risk_aversion=request.risk_aversion,
             min_service_level=request.min_service_level
         )

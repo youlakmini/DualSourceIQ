@@ -8,6 +8,7 @@ import SimulationView from './components/SimulationView';
 import WhatIfView from './components/WhatIfView';
 import ForecastView from './components/ForecastView';
 import ReportsView from './components/ReportsView';
+import OptiMascot from './components/OptiMascot';
 import { RefreshIcon } from './components/Icons';
 
 function App() {
@@ -375,6 +376,9 @@ function App() {
           )}
         </main>
       </div>
+
+      {/* Opti the Warehouse Bot - Interactive Mascot & Supply Assistant */}
+      <OptiMascot activeTab={activeTab} simLoading={simLoading || whatIfLoading} />
     </div>
   );
 }

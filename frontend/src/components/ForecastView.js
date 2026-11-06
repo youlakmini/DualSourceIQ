@@ -9,7 +9,7 @@ const DEFAULT_PRODUCTS = [
   { sku: 'FOODS_2_001_CA_1', name: 'Product E (Foods Item 3)', category: 'FOODS', on_hand_stock: 640, reorder_point: 300, order_quantity: 120 }
 ];
 
-function ForecastView() {
+function ForecastView({ onTestInWhatIf }) {
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
   const [selectedSku, setSelectedSku] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -99,6 +99,21 @@ function ForecastView() {
 
     return series;
   }, [currentProduct, period]);
+
+  // Dynamic trend percentage calculation from forecast start to end
+  const trendPct = useMemo(() => {
+    if (!forecastData || forecastData.length < 2) return 8;
+    const firstVal = forecastData[0].forecast;
+    const lastVal = forecastData[forecastData.length - 1].forecast;
+    if (firstVal === 0) return 8;
+    return Math.round(((lastVal - firstVal) / firstVal) * 100);
+  }, [forecastData]);
+
+  const handleRunWhatIf = () => {
+    if (onTestInWhatIf) {
+      onTestInWhatIf(currentProduct.sku, trendPct, currentProduct.name);
+    }
+  };
 
   // Aggregate metrics
   const totalForecastDemand = useMemo(() => {
@@ -241,9 +256,27 @@ function ForecastView() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 12px', fontSize: '12px' }} title="Download CSV">
               <span>📥 Export CSV</span>
+            </button>
+            <button 
+              className="btn-primary" 
+              onClick={handleRunWhatIf} 
+              style={{ 
+                padding: '5px 13px', 
+                fontSize: '12px', 
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                boxShadow: '0 2px 5px rgba(37, 99, 235, 0.25)',
+                cursor: 'pointer'
+              }} 
+              title={`Test ${currentProduct.name} in What-If Sourcing Analysis with ${trendPct >= 0 ? '+' : ''}${trendPct}% forecasted demand surge`}
+            >
+              <span>⚡ Stress-Test in What-If Analysis ({trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`}) →</span>
             </button>
           </div>
         </div>
@@ -459,10 +492,12 @@ function ForecastView() {
 
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
               <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Demand Trend</span>
-              <h3 style={{ margin: '3px 0 1px 0', fontSize: '16.5px', fontWeight: '700', color: '#166534' }}>
-                Increasing ↗
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '16.5px', fontWeight: '700', color: trendPct >= 0 ? '#166534' : '#b91c1c' }}>
+                {trendPct >= 0 ? 'Increasing ↗' : 'Decreasing ↘'}
               </h3>
-              <span style={{ fontSize: '10.5px', color: '#16a34a', fontWeight: '500' }}>+8.4% seasonal</span>
+              <span style={{ fontSize: '10.5px', color: trendPct >= 0 ? '#16a34a' : '#ef4444', fontWeight: '500' }}>
+                {trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`} over horizon
+              </span>
             </div>
 
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>

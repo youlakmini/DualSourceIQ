@@ -48,6 +48,7 @@ function App() {
     demand_modifier_pct: 0,
     min_service_level: 0.95
   });
+  const [forecastBanner, setForecastBanner] = useState(null);
 
   // Inventory State
   const [inventory, setInventory] = useState([]);
@@ -187,6 +188,30 @@ function App() {
     } finally {
       setWhatIfLoading(false);
     }
+  };
+
+  // --- Bridge: Demand Forecast -> What-If Sourcing Strategy (UC05) ---
+  const handleTestInWhatIf = (sku, demandModPct, productName) => {
+    const item = inventory.find(i => i.sku === sku);
+    const updatedParams = {
+      ...whatIfParams,
+      sku: sku,
+      demand_modifier_pct: demandModPct,
+      ...(item ? {
+        regular_unit_cost: item.unit_cost || whatIfParams.regular_unit_cost,
+        emergency_unit_cost: item.unit_cost ? Number((item.unit_cost * 2.2).toFixed(2)) : whatIfParams.emergency_unit_cost,
+      } : {})
+    };
+
+    setWhatIfParams(updatedParams);
+    setForecastBanner({
+      sku: sku,
+      productName: productName || (item ? item.name : sku),
+      trendPct: demandModPct
+    });
+    setWhatIfResults(null);
+    setWhatIfError(null);
+    setActiveTab('whatif');
   };
 
   // --- Inventory Editing & Deleting ---
@@ -364,11 +389,13 @@ function App() {
               error={whatIfError}
               results={whatIfResults}
               inventory={inventory}
+              forecastBanner={forecastBanner}
+              onDismissBanner={() => setForecastBanner(null)}
             />
           )}
 
           {activeTab === 'forecast' && (
-            <ForecastView />
+            <ForecastView onTestInWhatIf={handleTestInWhatIf} />
           )}
 
           {activeTab === 'reports' && (

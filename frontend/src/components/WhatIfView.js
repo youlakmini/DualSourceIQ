@@ -7,7 +7,9 @@ function WhatIfView({
   loading,
   error,
   results,
-  inventory
+  inventory,
+  forecastBanner,
+  onDismissBanner
 }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1.25fr', gap: '14px', height: 'calc(100vh - 120px)', minHeight: 0 }}>
@@ -15,6 +17,38 @@ function WhatIfView({
       <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
         <h3 className="card-title">What-If Scenario Simulation</h3>
         <p className="card-subtitle">Stress-test inventory policies under demand surges and lead-time disruptions</p>
+
+        {forecastBanner && (
+          <div style={{
+            background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+            border: '1px solid #93c5fd',
+            borderRadius: '6px',
+            padding: '9px 12px',
+            marginBottom: '12px',
+            fontSize: '12px',
+            color: '#1e40af',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+            lineHeight: 1.4
+          }}>
+            <div>
+              <span style={{ fontWeight: 700, color: '#1d4ed8' }}>⚡ Loaded from Demand Forecast:</span>{' '}
+              Applied <strong>{forecastBanner.trendPct >= 0 ? `+${forecastBanner.trendPct}%` : `${forecastBanner.trendPct}%`}</strong> demand surge to{' '}
+              <strong>{forecastBanner.productName || forecastBanner.sku}</strong>. Review your supplier lead times &amp; risk aversion below, then click &ldquo;Run What-If Analysis&rdquo;.
+            </div>
+            {onDismissBanner && (
+              <button 
+                onClick={onDismissBanner} 
+                style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontSize: '14px', padding: '0 4px', fontWeight: 'bold' }}
+                title="Dismiss"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px', marginBottom: '12px' }}>
           <div className="form-group">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { TrendingIcon } from './Icons';
 
 // Fallback products if database connection is pending
 const DEFAULT_PRODUCTS = [
@@ -60,13 +59,12 @@ function ForecastView() {
 
   // Generate dynamic time-series forecast data based on SKU hash and period
   const forecastData = useMemo(() => {
-    // Generate deterministic seed from SKU string
     let seed = 42;
     const skuStr = currentProduct.sku || 'FOODS';
     for (let i = 0; i < skuStr.length; i++) {
       seed = (seed * 31 + skuStr.charCodeAt(i)) % 1000;
     }
-    const baseUnit = 350 + (seed % 280); // Base demand level around 350 - 630
+    const baseUnit = 350 + (seed % 280);
 
     let count = 8;
     let labelPrefix = 'W';
@@ -80,13 +78,11 @@ function ForecastView() {
     let currentLevel = baseUnit;
 
     for (let i = 1; i <= count; i++) {
-      // Upward trend with realistic non-linear seasonality
       const trendComponent = i * 45;
       const seasonalSin = Math.sin((i / count) * Math.PI * 2) * 60;
       const noise = ((seed * (i + 13)) % 40) - 20;
 
       const forecastVal = Math.round(currentLevel + trendComponent + seasonalSin + noise);
-      // Historical actual demand (available for first ~65% of the timeline)
       const hasActual = i <= Math.ceil(count * 0.7);
       const actualNoise = ((seed * (i * 7 + 19)) % 50) - 25;
       const actualVal = hasActual ? Math.max(100, Math.round(forecastVal + actualNoise - 20)) : null;
@@ -121,7 +117,7 @@ function ForecastView() {
     return (sum / forecastData.length).toFixed(1);
   }, [forecastData]);
 
-  // Export forecast to real downloadable CSV
+  // Export forecast to CSV
   const handleExportCSV = () => {
     const headers = ["Period", "Product_SKU", "Product_Name", "Category", "XGBoost_Forecast_Units", "Actual_Units", "Lower_Bound_95", "Upper_Bound_95", "Model_Accuracy_Pct"];
     const rows = forecastData.map(d => [
@@ -146,10 +142,10 @@ function ForecastView() {
     document.body.removeChild(link);
   };
 
-  // SVG Chart Geometry Calculations
-  const chartHeight = 260;
-  const chartWidth = 680;
-  const padding = { top: 25, right: 30, bottom: 40, left: 55 };
+  // SVG Chart Geometry Calculations (Enlarged)
+  const chartHeight = 280;
+  const chartWidth = 720;
+  const padding = { top: 20, right: 30, bottom: 42, left: 58 };
   const graphWidth = chartWidth - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
 
@@ -174,7 +170,6 @@ function ForecastView() {
     return padding.top + (1 - ratio) * graphHeight;
   };
 
-  // Forecast polyline points
   const forecastPoints = forecastData.map((d, i) => ({
     x: getX(i, forecastData.length),
     y: getY(d.forecast),
@@ -182,7 +177,6 @@ function ForecastView() {
   }));
   const forecastPathStr = forecastPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
-  // Actual polyline points
   const actualDataList = forecastData.filter(d => d.actual !== null);
   const actualPoints = actualDataList.map((d) => {
     const originalIndex = forecastData.findIndex(item => item.index === d.index);
@@ -195,339 +189,327 @@ function ForecastView() {
   const actualPathStr = actualPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Top Filter and Configuration Card */}
-      <div className="dashboard-card" style={{ padding: '20px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '18px' }}>
-          <div>
-            <h3 className="card-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <TrendingIcon />
-              <span>Demand Forecast Dashboard (XGBoost Engine)</span>
-            </h3>
-            <span style={{ fontSize: '13px', color: '#64748b' }}>
-              Machine learning time-series projections derived from Walmart M5 sales history
-            </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: 'calc(100vh - 120px)', minHeight: 0 }}>
+      {/* Top Compact Filter Bar */}
+      <div className="dashboard-card" style={{ padding: '10px 16px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Product:</label>
+              <select 
+                className="form-select" 
+                value={selectedSku} 
+                onChange={(e) => setSelectedSku(e.target.value)}
+                style={{ width: '210px', padding: '4px 8px' }}
+              >
+                {filteredProducts.map(item => (
+                  <option key={item.sku} value={item.sku}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Category:</label>
+              <select 
+                className="form-select" 
+                value={categoryFilter} 
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                style={{ width: '130px', padding: '4px 8px' }}
+              >
+                <option value="ALL">All</option>
+                <option value="FOODS">FOODS</option>
+                <option value="HOBBIES">HOBBIES</option>
+                <option value="HOUSEHOLD">HOUSEHOLD</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Horizon:</label>
+              <select 
+                className="form-select" 
+                value={period} 
+                onChange={(e) => setPeriod(e.target.value)}
+                style={{ width: '160px', padding: '4px 8px' }}
+              >
+                <option value="8_weeks">Next 8 Weeks (W1-W8)</option>
+                <option value="12_weeks">Next 12 Weeks (Quarter)</option>
+                <option value="4_weeks">Next 4 Weeks (Month)</option>
+                <option value="30_days">Next 30 Days (Daily)</option>
+                <option value="7_days">Next 7 Days (Week)</option>
+              </select>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <button className="btn-secondary" onClick={handleExportCSV} title="Export CSV forecast data">
-              <span>📥 Export Forecast</span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 10px', fontSize: '12px' }} title="Download CSV">
+              <span>📥 Export</span>
             </button>
-            <button className="btn-primary" onClick={() => setShowDetails(!showDetails)}>
+            <button className="btn-primary" onClick={() => setShowDetails(!showDetails)} style={{ padding: '5px 12px', fontSize: '12px' }}>
               <span>{showDetails ? 'Hide Details' : 'View Details'}</span>
             </button>
           </div>
         </div>
-
-        {/* Useful Filters Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1.2fr', gap: '16px', borderTop: '1px solid #f1f5f9', paddingTop: '16px' }}>
-          <div className="form-group">
-            <label className="form-label">Product (SKU)</label>
-            <select 
-              className="form-select" 
-              value={selectedSku} 
-              onChange={(e) => setSelectedSku(e.target.value)}
-            >
-              {filteredProducts.map(item => (
-                <option key={item.sku} value={item.sku}>
-                  {item.name} ({item.sku.substring(0, 14)}...)
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Category Filter</label>
-            <select 
-              className="form-select" 
-              value={categoryFilter} 
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="ALL">All Categories</option>
-              <option value="FOODS">FOODS</option>
-              <option value="HOBBIES">HOBBIES</option>
-              <option value="HOUSEHOLD">HOUSEHOLD</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Forecast Horizon</label>
-            <select 
-              className="form-select" 
-              value={period} 
-              onChange={(e) => setPeriod(e.target.value)}
-            >
-              <option value="8_weeks">Next 8 Weeks (W1 - W8)</option>
-              <option value="12_weeks">Next 12 Weeks (Quarterly Plan)</option>
-              <option value="4_weeks">Next 4 Weeks (Monthly Plan)</option>
-              <option value="30_days">Next 30 Days (Daily)</option>
-              <option value="7_days">Next 7 Days (Short-term)</option>
-            </select>
-          </div>
-        </div>
       </div>
 
-      {/* Main Chart Card */}
-      <div className="dashboard-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '12px' }}>
-          <div>
-            <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>
-              Demand Forecast vs. Actual: {currentProduct.name}
-            </h4>
-            <span style={{ fontSize: '12.5px', color: '#64748b' }}>
-              SKU: {currentProduct.sku} &bull; Category: {currentProduct.category} &bull; On Hand: {currentProduct.on_hand_stock} units
-            </span>
+      {/* Main Content: 2-Column Split */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '12px', flex: 1, minHeight: 0 }}>
+        {/* Left Column: Interactive Chart Card */}
+        <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '12px 16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexShrink: 0 }}>
+            <div>
+              <h4 style={{ margin: 0, fontSize: '14.5px', fontWeight: '700', color: '#0f172a' }}>
+                Demand Forecast vs. Actual: {currentProduct.name}
+              </h4>
+              <span style={{ fontSize: '11px', color: '#64748b' }}>
+                SKU: {currentProduct.sku} &bull; Category: {currentProduct.category}
+              </span>
+            </div>
+
+            {/* Legend */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', fontWeight: '500' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '9px', height: '9px', borderRadius: '50%', backgroundColor: '#2563eb', display: 'inline-block' }}></span>
+                <span>Forecast</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ width: '9px', height: '9px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }}></span>
+                <span>Actual</span>
+              </div>
+            </div>
           </div>
 
-          {/* Interactive Legend */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '18px', fontSize: '13px', fontWeight: '500' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#2563eb', display: 'inline-block' }}></span>
-              <span style={{ color: '#1e293b' }}>Forecast (XGBoost)</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }}></span>
-              <span style={{ color: '#1e293b' }}>Actual Demand</span>
-            </div>
-          </div>
-        </div>
+          {/* SVG Chart */}
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg 
+              viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
+              style={{ width: '100%', height: '100%', maxHeight: '320px', display: 'block' }}
+            >
+              {/* Grid Lines */}
+              {yTicks.map((tickVal, idx) => {
+                const yPos = getY(tickVal);
+                return (
+                  <g key={idx}>
+                    <line 
+                      x1={padding.left} 
+                      y1={yPos} 
+                      x2={chartWidth - padding.right} 
+                      y2={yPos} 
+                      stroke="#e2e8f0" 
+                      strokeDasharray="4 4" 
+                      strokeWidth="1" 
+                    />
+                    <text 
+                      x={padding.left - 10} 
+                      y={yPos + 5} 
+                      fill="#475569" 
+                      fontSize="13" 
+                      fontWeight="600"
+                      textAnchor="end"
+                      fontFamily="monospace"
+                    >
+                      {Math.round(tickVal)}
+                    </text>
+                  </g>
+                );
+              })}
 
-        {/* SVG Interactive Line Chart */}
-        <div style={{ width: '100%', overflowX: 'auto', backgroundColor: '#ffffff', borderRadius: '8px', padding: '10px 0' }}>
-          <svg 
-            viewBox={`0 0 ${chartWidth} ${chartHeight}`} 
-            style={{ width: '100%', height: 'auto', minWidth: '550px', display: 'block' }}
-          >
-            {/* Horizontal Grid lines and Y-axis Labels */}
-            {yTicks.map((tickVal, idx) => {
-              const yPos = getY(tickVal);
-              return (
-                <g key={idx}>
-                  <line 
-                    x1={padding.left} 
-                    y1={yPos} 
-                    x2={chartWidth - padding.right} 
-                    y2={yPos} 
-                    stroke="#e2e8f0" 
-                    strokeDasharray="4 4" 
-                    strokeWidth="1" 
-                  />
-                  <text 
-                    x={padding.left - 10} 
-                    y={yPos + 4} 
-                    fill="#64748b" 
-                    fontSize="11" 
-                    textAnchor="end"
-                    fontFamily="monospace"
-                  >
-                    {Math.round(tickVal)}
-                  </text>
-                </g>
-              );
-            })}
+              {/* X-axis */}
+              <line 
+                x1={padding.left} 
+                y1={padding.top + graphHeight} 
+                x2={chartWidth - padding.right} 
+                y2={padding.top + graphHeight} 
+                stroke="#cbd5e1" 
+                strokeWidth="1.5" 
+              />
 
-            {/* X-axis Line */}
-            <line 
-              x1={padding.left} 
-              y1={padding.top + graphHeight} 
-              x2={chartWidth - padding.right} 
-              y2={padding.top + graphHeight} 
-              stroke="#cbd5e1" 
-              strokeWidth="1.5" 
-            />
+              {/* X-axis Labels with Smart Spacing (Bigger & Clearer) */}
+              {forecastData.map((d, i) => {
+                const total = forecastData.length;
+                // If more than 14 points (e.g. 30 days), show every 5th day and the first & last day (D1, D5, D10, D15, D20, D25, D30)
+                const showLabel = total <= 14 || i === 0 || (i + 1) % 5 === 0 || i === total - 1;
+                if (!showLabel) return null;
 
-            {/* X-axis Labels */}
-            {forecastData.map((d, i) => {
-              const xPos = getX(i, forecastData.length);
-              return (
-                <text 
-                  key={i} 
-                  x={xPos} 
-                  y={chartHeight - 12} 
-                  fill="#475569" 
-                  fontSize="11.5" 
-                  textAnchor="middle" 
-                  fontWeight="600"
-                >
-                  {d.label}
-                </text>
-              );
-            })}
+                const xPos = getX(i, total);
+                return (
+                  <g key={i}>
+                    {/* Small axis tick mark */}
+                    <line
+                      x1={xPos}
+                      y1={padding.top + graphHeight}
+                      x2={xPos}
+                      y2={padding.top + graphHeight + 5}
+                      stroke="#94a3b8"
+                      strokeWidth="1.5"
+                    />
+                    <text 
+                      x={xPos} 
+                      y={chartHeight - 8} 
+                      fill="#1e293b" 
+                      fontSize="13" 
+                      textAnchor="middle" 
+                      fontWeight="700"
+                    >
+                      {d.label}
+                    </text>
+                  </g>
+                );
+              })}
 
-            {/* Actual Demand Path (Green) */}
-            {actualPathStr && (
+              {/* Actual Line (Green) */}
+              {actualPathStr && (
+                <path 
+                  d={actualPathStr} 
+                  fill="none" 
+                  stroke="#10b981" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                />
+              )}
+
+              {/* Forecast Line (Blue) */}
               <path 
-                d={actualPathStr} 
+                d={forecastPathStr} 
                 fill="none" 
-                stroke="#10b981" 
+                stroke="#2563eb" 
                 strokeWidth="2.5" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
               />
-            )}
 
-            {/* Forecast Demand Path (Blue) */}
-            <path 
-              d={forecastPathStr} 
-              fill="none" 
-              stroke="#2563eb" 
-              strokeWidth="2.5" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-            />
-
-            {/* Actual Demand Dots */}
-            {actualPoints.map((p, idx) => (
-              <circle 
-                key={`actual-${idx}`} 
-                cx={p.x} 
-                cy={p.y} 
-                r="4.5" 
-                fill="#10b981" 
-                stroke="#ffffff" 
-                strokeWidth="2" 
-                style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredPoint({ type: 'Actual', ...p.data, x: p.x, y: p.y })}
-                onMouseLeave={() => setHoveredPoint(null)}
-              />
-            ))}
-
-            {/* Forecast Demand Dots */}
-            {forecastPoints.map((p, idx) => (
-              <circle 
-                key={`forecast-${idx}`} 
-                cx={p.x} 
-                cy={p.y} 
-                r="5" 
-                fill="#2563eb" 
-                stroke="#ffffff" 
-                strokeWidth="2" 
-                style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setHoveredPoint({ type: 'Forecast', ...p.data, x: p.x, y: p.y })}
-                onMouseLeave={() => setHoveredPoint(null)}
-              />
-            ))}
-
-            {/* Hover Tooltip Overlay */}
-            {hoveredPoint && (
-              <g transform={`translate(${Math.min(hoveredPoint.x, chartWidth - 140)}, ${Math.max(hoveredPoint.y - 45, 10)})`}>
-                <rect 
-                  x="0" 
-                  y="0" 
-                  width="130" 
-                  height="40" 
-                  rx="6" 
-                  fill="#0f172a" 
-                  opacity="0.9" 
+              {/* Actual Dots */}
+              {actualPoints.map((p, idx) => (
+                <circle 
+                  key={`actual-${idx}`} 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="4" 
+                  fill="#10b981" 
+                  stroke="#ffffff" 
+                  strokeWidth="1.5" 
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredPoint({ type: 'Actual', ...p.data, x: p.x, y: p.y })}
+                  onMouseLeave={() => setHoveredPoint(null)}
                 />
-                <text x="10" y="16" fill="#94a3b8" fontSize="10.5">
-                  {hoveredPoint.label} ({hoveredPoint.type})
-                </text>
-                <text x="10" y="31" fill="#38bdf8" fontSize="13" fontWeight="700">
-                  {hoveredPoint.type === 'Forecast' ? hoveredPoint.forecast : hoveredPoint.actual} units
-                </text>
-              </g>
-            )}
-          </svg>
+              ))}
+
+              {/* Forecast Dots */}
+              {forecastPoints.map((p, idx) => (
+                <circle 
+                  key={`forecast-${idx}`} 
+                  cx={p.x} 
+                  cy={p.y} 
+                  r="4.5" 
+                  fill="#2563eb" 
+                  stroke="#ffffff" 
+                  strokeWidth="2" 
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredPoint({ type: 'Forecast', ...p.data, x: p.x, y: p.y })}
+                  onMouseLeave={() => setHoveredPoint(null)}
+                />
+              ))}
+
+              {/* Hover Tooltip */}
+              {hoveredPoint && (
+                <g transform={`translate(${Math.min(hoveredPoint.x, chartWidth - 130)}, ${Math.max(hoveredPoint.y - 42, 8)})`}>
+                  <rect 
+                    x="0" 
+                    y="0" 
+                    width="120" 
+                    height="36" 
+                    rx="5" 
+                    fill="#0f172a" 
+                    opacity="0.9" 
+                  />
+                  <text x="8" y="14" fill="#94a3b8" fontSize="10">
+                    {hoveredPoint.label} ({hoveredPoint.type})
+                  </text>
+                  <text x="8" y="28" fill="#38bdf8" fontSize="12" fontWeight="700">
+                    {hoveredPoint.type === 'Forecast' ? hoveredPoint.forecast : hoveredPoint.actual} units
+                  </text>
+                </g>
+              )}
+            </svg>
+          </div>
+
+          {/* Integration Note */}
+          <div style={{ padding: '8px 12px', backgroundColor: '#eff6ff', borderRadius: '6px', borderLeft: '3px solid #2563eb', fontSize: '11.5px', color: '#1e40af', marginTop: 'auto' }}>
+            <strong>Integration Note:</strong> This XGBoost forecast supplies the <strong>Base Expected Demand</strong> &amp; <strong>Error Variance (&sigma;&sup2;)</strong> to the Monte Carlo Risk Simulation.
+          </div>
         </div>
 
-        {/* Forecast KPI Metrics (Exact matches to user mockup) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '20px', borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
-          <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Demand</span>
-            <h3 style={{ margin: '6px 0 2px 0', fontSize: '24px', fontWeight: '700', color: '#0f172a' }}>
-              {totalForecastDemand.toLocaleString()} units
-            </h3>
-            <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: '500' }}>Cumulative Horizon Demand</span>
+        {/* Right Column: KPIs & Details Table Card */}
+        <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '12px 16px' }}>
+          {/* 4 KPI Cards in a 2x2 grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px', flexShrink: 0 }}>
+            <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Demand</span>
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>
+                {totalForecastDemand.toLocaleString()} units
+              </h3>
+              <span style={{ fontSize: '10.5px', color: '#2563eb', fontWeight: '500' }}>Horizon Demand</span>
+            </div>
+
+            <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Average Weekly</span>
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>
+                {averageWeekly.toLocaleString()} units
+              </h3>
+              <span style={{ fontSize: '10.5px', color: '#64748b' }}>Velocity run-rate</span>
+            </div>
+
+            <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Demand Trend</span>
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '16.5px', fontWeight: '700', color: '#166534' }}>
+                Increasing ↗
+              </h3>
+              <span style={{ fontSize: '10.5px', color: '#16a34a', fontWeight: '500' }}>+8.4% seasonal</span>
+            </div>
+
+            <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Accuracy</span>
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#2563eb' }}>
+                {avgAccuracy}%
+              </h3>
+              <span style={{ fontSize: '10.5px', color: '#64748b' }}>XGBoost Fit</span>
+            </div>
           </div>
 
-          <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Average Weekly</span>
-            <h3 style={{ margin: '6px 0 2px 0', fontSize: '24px', fontWeight: '700', color: '#0f172a' }}>
-              {averageWeekly.toLocaleString()} units
-            </h3>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>Weekly baseline velocity</span>
-          </div>
-
-          <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Demand Trend</span>
-            <h3 style={{ margin: '6px 0 2px 0', fontSize: '22px', fontWeight: '700', color: '#166534' }}>
-              Increasing ↗
-            </h3>
-            <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: '500' }}>+8.4% seasonal trajectory</span>
-          </div>
-
-          <div style={{ padding: '16px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-            <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Accuracy</span>
-            <h3 style={{ margin: '6px 0 2px 0', fontSize: '24px', fontWeight: '700', color: '#2563eb' }}>
-              {avgAccuracy}%
-            </h3>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>XGBoost Validation Fit</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Expandable Breakdown Details Table */}
-      {showDetails && (
-        <div className="dashboard-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-            <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: '#0f172a' }}>
-              Detailed Forecast Breakdown by Period
+          {/* Table Breakdown (Scrolls internally inside right column) */}
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+            <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>
+              Period-by-Period Breakdown
             </h4>
-            <span style={{ fontSize: '12px', color: '#64748b' }}>
-              95% Confidence Bounds and Residual Variance
-            </span>
-          </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <table className="modern-table">
-              <thead>
-                <tr>
-                  <th>Period</th>
-                  <th>Forecast Demand</th>
-                  <th>Actual Demand</th>
-                  <th>Variance (Diff)</th>
-                  <th>Lower Bound (95%)</th>
-                  <th>Upper Bound (95%)</th>
-                  <th>Model Accuracy</th>
-                </tr>
-              </thead>
-              <tbody>
-                {forecastData.map((d, idx) => {
-                  const diff = d.actual !== null ? d.actual - d.forecast : null;
-                  return (
+            <div style={{ flex: 1, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '6px' }}>
+              <table className="modern-table">
+                <thead style={{ position: 'sticky', top: 0, zIndex: 5, backgroundColor: '#f8fafc' }}>
+                  <tr>
+                    <th>Period</th>
+                    <th>Forecast</th>
+                    <th>Actual</th>
+                    <th>Lower 95%</th>
+                    <th>Upper 95%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {forecastData.map((d, idx) => (
                     <tr key={idx}>
                       <td style={{ fontWeight: '600' }}>{d.label}</td>
-                      <td><strong>{d.forecast}</strong> units</td>
-                      <td>{d.actual !== null ? `${d.actual} units` : <span style={{ color: '#94a3b8' }}>Upcoming</span>}</td>
-                      <td>
-                        {diff !== null ? (
-                          <span style={{ color: diff >= 0 ? '#166534' : '#991b1b', fontWeight: '600' }}>
-                            {diff >= 0 ? `+${diff}` : diff} units
-                          </span>
-                        ) : (
-                          <span style={{ color: '#94a3b8' }}>—</span>
-                        )}
-                      </td>
-                      <td>{d.lowerBound} units</td>
-                      <td>{d.upperBound} units</td>
-                      <td>
-                        <span className="badge-pill badge-healthy">
-                          {d.accuracy}%
-                        </span>
-                      </td>
+                      <td><strong>{d.forecast}</strong></td>
+                      <td>{d.actual !== null ? d.actual : <span style={{ color: '#94a3b8' }}>Upcoming</span>}</td>
+                      <td>{d.lowerBound}</td>
+                      <td>{d.upperBound}</td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Integration Notice Box */}
-      <div style={{ padding: '16px 20px', backgroundColor: '#eff6ff', borderRadius: '8px', borderLeft: '5px solid #2563eb', fontSize: '13.5px', color: '#1e40af' }}>
-        <strong>Decision Support Integration Note:</strong> This XGBoost demand forecast directly supplies the <strong>Base Expected Demand</strong> and <strong>Residual Error Variance (&sigma;&sup2;)</strong> to the <em>Manage Supplier Parameters (UC07)</em> and <em>What-If Analysis (UC05)</em> Monte Carlo engines to optimize dual-sourcing splits.
       </div>
     </div>
   );

@@ -10,12 +10,13 @@ function WhatIfView({
   inventory
 }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div className="dashboard-card">
+    <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1.25fr', gap: '14px', height: 'calc(100vh - 120px)', minHeight: 0 }}>
+      {/* Left Column: What-If Parameters Card */}
+      <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
         <h3 className="card-title">What-If Scenario Simulation</h3>
         <p className="card-subtitle">Stress-test inventory policies under demand surges and lead-time disruptions</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px', marginBottom: '12px' }}>
           <div className="form-group">
             <label className="form-label">Target Product</label>
             <select className="form-select" name="sku" value={params.sku} onChange={handleSimChange}>
@@ -23,7 +24,7 @@ function WhatIfView({
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Risk Aversion λ (0 - 1)</label>
+            <label className="form-label">Risk Aversion &lambda; (0 - 1)</label>
             <input 
               type="number" 
               step="0.1" 
@@ -36,76 +37,81 @@ function WhatIfView({
               onKeyDown={(e) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); }}
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Demand Surge / Drop (%)</label>
-            <input 
-              type="number" 
-              step="1" 
-              min="-99" 
-              max="500" 
-              className="form-input" 
-              name="demand_modifier_pct" 
-              value={params.demand_modifier_pct} 
-              onChange={handleSimChange} 
-              placeholder="e.g. +20 for 20% spike" 
-            />
-          </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', borderTop: '1px solid #f1f5f9', paddingTop: '18px', marginBottom: '20px' }}>
-          <div>
-            <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: '0 0 10px 0' }}>Regular Supplier Parameters</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div className="form-group">
-                <label className="form-label">Unit Cost ($)</label>
-                <input type="number" min="0" className="form-input" name="regular_unit_cost" value={params.regular_unit_cost} onChange={handleSimChange} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Mean Lead Time (Days)</label>
-                <input type="number" min="0" className="form-input" name="regular_lead_time_mean" value={params.regular_lead_time_mean} onChange={handleSimChange} />
-              </div>
+        <div className="form-group" style={{ marginBottom: '12px' }}>
+          <label className="form-label">Demand Surge / Drop (%)</label>
+          <input 
+            type="number" 
+            step="1" 
+            min="-99" 
+            max="500" 
+            className="form-input" 
+            name="demand_modifier_pct" 
+            value={params.demand_modifier_pct} 
+            onChange={handleSimChange} 
+            placeholder="e.g. +20 for 20% spike, -15 for slow season" 
+          />
+        </div>
+
+        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', marginBottom: '10px' }}>
+          <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0 0 6px 0' }}>Regular Supplier Parameters</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="form-group">
+              <label className="form-label">Unit Cost ($)</label>
+              <input type="number" min="0" className="form-input" name="regular_unit_cost" value={params.regular_unit_cost} onChange={handleSimChange} />
             </div>
-          </div>
-          <div>
-            <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: '0 0 10px 0' }}>Emergency Supplier Parameters</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div className="form-group">
-                <label className="form-label">Unit Cost ($)</label>
-                <input type="number" min="0" className="form-input" name="emergency_unit_cost" value={params.emergency_unit_cost} onChange={handleSimChange} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Mean Lead Time (Days)</label>
-                <input type="number" min="0" className="form-input" name="emergency_lead_time_mean" value={params.emergency_lead_time_mean} onChange={handleSimChange} />
-              </div>
+            <div className="form-group">
+              <label className="form-label">Mean Lead Time (Days)</label>
+              <input type="number" min="0" className="form-input" name="regular_lead_time_mean" value={params.regular_lead_time_mean} onChange={handleSimChange} />
             </div>
           </div>
         </div>
 
-        <button className="btn-primary" onClick={runSimulation} disabled={loading} style={{ padding: '12px 24px', backgroundColor: '#f59e0b' }}>
-          {loading ? 'Evaluating Scenario Candidates...' : 'Run What-If Strategy Comparison (UC05.1)'}
-        </button>
-        {error && <p style={{ color: '#ef4444', fontSize: '13px', marginTop: '12px' }}>Error: {error}</p>}
+        <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', marginBottom: '14px' }}>
+          <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0 0 6px 0' }}>Emergency Supplier Parameters</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="form-group">
+              <label className="form-label">Unit Cost ($)</label>
+              <input type="number" min="0" className="form-input" name="emergency_unit_cost" value={params.emergency_unit_cost} onChange={handleSimChange} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Mean Lead Time (Days)</label>
+              <input type="number" min="0" className="form-input" name="emergency_lead_time_mean" value={params.emergency_lead_time_mean} onChange={handleSimChange} />
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 'auto', paddingTop: '6px' }}>
+          <button className="btn-primary" onClick={runSimulation} disabled={loading} style={{ width: '100%', padding: '9px', backgroundColor: '#f59e0b' }}>
+            {loading ? 'Evaluating Scenario Candidates...' : 'Run What-If Strategy Comparison (UC05.1)'}
+          </button>
+          {error && <p style={{ color: '#ef4444', fontSize: '12px', marginTop: '6px', margin: '6px 0 0 0' }}>Error: {error}</p>}
+        </div>
       </div>
 
-      <div className="dashboard-card">
+      {/* Right Column: Compare Sourcing Strategies Table Card */}
+      <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
         <h3 className="card-title">Compare Sourcing Strategies (UC05.1)</h3>
         <p className="card-subtitle">Comparison of baseline allocations vs. risk-optimized allocation</p>
 
         {!results && (
-          <p style={{ color: '#94a3b8', fontSize: '14px', padding: '20px 0' }}>Adjust what-if parameters above and click Run to see the strategy comparison table.</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#94a3b8', fontSize: '13px' }}>
+            Adjust what-if parameters on the left and click "Run What-If Strategy Comparison" to see results.
+          </div>
         )}
 
         {results && results.all_plans && (
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ flex: 1, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '6px' }}>
             <table className="modern-table">
-              <thead>
+              <thead style={{ position: 'sticky', top: 0, zIndex: 5, backgroundColor: '#f8fafc' }}>
                 <tr>
                   <th>Strategy (Reg / Emg)</th>
                   <th>Expected Cost</th>
-                  <th>Service Level (Fill Rate)</th>
-                  <th>Risk (Worst 5% CVaR)</th>
-                  <th>Risk-Adjusted Objective</th>
-                  <th>Recommendation Status</th>
+                  <th>Service Level</th>
+                  <th>Risk (CVaR)</th>
+                  <th>Score</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -127,11 +133,11 @@ function WhatIfView({
                       <td>{plan.risk_adjusted_score.toFixed(2)}</td>
                       <td>
                         {isBest ? (
-                          <span className="badge-pill badge-healthy" style={{ padding: '4px 12px' }}>
-                            ⭐ Optimal Choice
+                          <span className="badge-pill badge-healthy">
+                            Recommended
                           </span>
                         ) : (
-                          <span style={{ color: '#94a3b8', fontSize: '13px' }}>Alternative</span>
+                          <span style={{ color: '#94a3b8', fontSize: '12px' }}>Alternative</span>
                         )}
                       </td>
                     </tr>

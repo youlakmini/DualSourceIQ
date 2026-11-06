@@ -18,20 +18,20 @@ function InventoryView({
   handleDeleteClick
 }) {
   return (
-    <div className="dashboard-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+    <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)', minHeight: 0 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '10px', flexShrink: 0 }}>
         <div>
           <h3 className="card-title" style={{ margin: 0 }}>Inventory Stock Overview</h3>
-          <span style={{ fontSize: '13px', color: '#64748b' }}>Showing {filteredInventory.length} configured inventory items</span>
+          <span style={{ fontSize: '12px', color: '#64748b' }}>Showing {filteredInventory.length} configured inventory items</span>
         </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <input 
             type="text" 
             className="form-input"
             placeholder="Search by SKU or Name..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '260px' }}
+            style={{ width: '240px' }}
           />
           <button className="btn-primary" onClick={() => setShowAddModal(true)}>
             <span>+ Add New Item</span>
@@ -48,7 +48,7 @@ function InventoryView({
               <button onClick={() => setShowAddModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>&times;</button>
             </div>
             <div className="modal-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div className="form-group">
                   <label className="form-label">Item Name</label>
                   <input type="text" className="form-input" name="name" value={addFormData.name} onChange={handleAddChange} />
@@ -79,10 +79,10 @@ function InventoryView({
                 </div>
               </div>
 
-              <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#0f172a', margin: '0 0 12px 0', borderTop: '1px solid #e2e8f0', paddingTop: '16px' }}>
+              <h4 style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0 0 10px 0', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
                 Simulation & Cost Parameters
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
                   <label className="form-label">Holding Cost ($/unit/day)</label>
                   <input type="number" step="0.01" min="0" className="form-input" name="holding_cost" value={addFormData.holding_cost} onChange={handleAddChange} />
@@ -101,9 +101,10 @@ function InventoryView({
         </div>
       )}
 
-      <div style={{ overflowX: 'auto' }}>
+      {/* Scrollable Table Viewport with Sticky Header */}
+      <div style={{ flex: 1, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '6px' }}>
         <table className="modern-table">
-          <thead>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 5, backgroundColor: '#f8fafc' }}>
             <tr>
               <th>Item Name</th>
               <th>SKU</th>
@@ -132,8 +133,8 @@ function InventoryView({
               return (
                 <tr key={item.id}>
                   {editingId === item.id ? (
-                    <td colSpan="7" style={{ padding: '16px', backgroundColor: '#f8fafc' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                    <td colSpan="7" style={{ padding: '12px', backgroundColor: '#f8fafc' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px', marginBottom: '8px' }}>
                         <label className="form-group"><span className="form-label">Name</span><input type="text" className="form-input" name="name" value={editFormData.name} onChange={handleEditChange} /></label>
                         <label className="form-group"><span className="form-label">SKU</span><input type="text" className="form-input" name="sku" value={editFormData.sku} onChange={handleEditChange} /></label>
                         <label className="form-group"><span className="form-label">Category</span>
@@ -145,15 +146,15 @@ function InventoryView({
                         </label>
                         <label className="form-group"><span className="form-label">Current Stock</span><input type="number" className="form-input" name="on_hand_stock" value={editFormData.on_hand_stock} onChange={handleEditChange} /></label>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px', marginBottom: '10px' }}>
                         <label className="form-group"><span className="form-label">Reorder Level</span><input type="number" className="form-input" name="reorder_point" value={editFormData.reorder_point} onChange={handleEditChange} /></label>
                         <label className="form-group"><span className="form-label">Safety Stock</span><input type="number" className="form-input" name="safety_stock" value={editFormData.safety_stock} onChange={handleEditChange} /></label>
                         <label className="form-group"><span className="form-label">Holding Cost ($)</span><input type="number" step="0.01" className="form-input" name="holding_cost" value={editFormData.holding_cost} onChange={handleEditChange} /></label>
                         <label className="form-group"><span className="form-label">Backorder Penalty ($)</span><input type="number" step="0.01" className="form-input" name="backorder_cost" value={editFormData.backorder_cost} onChange={handleEditChange} /></label>
                       </div>
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <button className="btn-primary" style={{ padding: '6px 16px', fontSize: '13px' }} onClick={handleSaveClick}>Save</button>
-                        <button className="btn-secondary" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={handleCancelClick}>Cancel</button>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="btn-primary" style={{ padding: '5px 12px', fontSize: '12px' }} onClick={handleSaveClick}>Save</button>
+                        <button className="btn-secondary" style={{ padding: '5px 12px', fontSize: '12px' }} onClick={handleCancelClick}>Cancel</button>
                       </div>
                     </td>
                   ) : (
@@ -170,9 +171,9 @@ function InventoryView({
                         </span>
                       </td>
                       <td>
-                        <button onClick={() => handleEditClick(item)} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: '500', cursor: 'pointer', marginRight: '10px' }}>Edit</button>
+                        <button onClick={() => handleEditClick(item)} style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: '500', cursor: 'pointer', marginRight: '8px' }}>Edit</button>
                         <span style={{ color: '#cbd5e1' }}>|</span>
-                        <button onClick={() => handleDeleteClick(item.id)} style={{ background: 'none', border: 'none', color: '#ef4444', fontWeight: '500', cursor: 'pointer', marginLeft: '10px' }}>Delete</button>
+                        <button onClick={() => handleDeleteClick(item.id)} style={{ background: 'none', border: 'none', color: '#ef4444', fontWeight: '500', cursor: 'pointer', marginLeft: '8px' }}>Delete</button>
                       </td>
                     </>
                   )}
@@ -182,7 +183,7 @@ function InventoryView({
           </tbody>
         </table>
         {filteredInventory.length === 0 && (
-          <p style={{ textAlign: 'center', padding: '30px', color: '#64748b' }}>No inventory items matched your search query.</p>
+          <p style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>No inventory items matched your search query.</p>
         )}
       </div>
     </div>

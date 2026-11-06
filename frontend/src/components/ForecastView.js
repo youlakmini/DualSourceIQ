@@ -14,7 +14,6 @@ function ForecastView() {
   const [selectedSku, setSelectedSku] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
   const [period, setPeriod] = useState('8_weeks');
-  const [showDetails, setShowDetails] = useState(false);
   const [hoveredPoint, setHoveredPoint] = useState(null);
 
   // Fetch inventory items from database on mount
@@ -243,11 +242,8 @@ function ForecastView() {
           </div>
 
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 10px', fontSize: '12px' }} title="Download CSV">
-              <span>📥 Export</span>
-            </button>
-            <button className="btn-primary" onClick={() => setShowDetails(!showDetails)} style={{ padding: '5px 12px', fontSize: '12px' }}>
-              <span>{showDetails ? 'Hide Details' : 'View Details'}</span>
+            <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 12px', fontSize: '12px' }} title="Download CSV">
+              <span>📥 Export CSV</span>
             </button>
           </div>
         </div>

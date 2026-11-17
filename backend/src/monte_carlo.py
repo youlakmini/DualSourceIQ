@@ -67,7 +67,7 @@ def run_monte_carlo(
         
     return results_list
 
-def calculate_risk_metrics(results_list, cvar_alpha=0.05):
+def calculate_risk_metrics(results_list, cvar_alpha=0.05, verbose=False):
     """
     Calculates expected values and Conditional Value at Risk (CVaR).
     cvar_alpha=0.05 means the average of the worst 5% of outcomes (highest costs).
@@ -90,16 +90,17 @@ def calculate_risk_metrics(results_list, cvar_alpha=0.05):
     worst_cases = sorted_costs[:cutoff_idx]
     cvar = worst_cases.mean()
     
-    print("\n" + "="*45)
-    print("MONTE CARLO SIMULATION RESULTS")
-    print("="*45)
-    print(f"Number of Scenarios : {len(results_list)}")
-    print(f"Expected Cost       : ${expected_cost:,.2f}")
-    print(f"Expected Fill Rate  : {expected_fill_rate*100:.2f}%")
-    print(f"Stockout Probability: {stockout_prob*100:.2f}%")
-    print("-" * 45)
-    print(f"Cost CVaR (Worst 5%): ${cvar:,.2f}")
-    print("="*45)
+    if verbose:
+        print("\n" + "="*45)
+        print("MONTE CARLO SIMULATION RESULTS")
+        print("="*45)
+        print(f"Number of Scenarios : {len(results_list)}")
+        print(f"Expected Cost       : ${expected_cost:,.2f}")
+        print(f"Expected Fill Rate  : {expected_fill_rate*100:.2f}%")
+        print(f"Stockout Probability: {stockout_prob*100:.2f}%")
+        print("-" * 45)
+        print(f"Cost CVaR (Worst 5%): ${cvar:,.2f}")
+        print("="*45)
     
     avg_yearly_demand = df_results['total_demand'].mean()
     

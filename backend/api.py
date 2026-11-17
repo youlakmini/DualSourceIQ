@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import os
 import pickle
 import numpy as np
@@ -9,6 +10,7 @@ from src.data_loader import load_m5_product_demand
 from src.supplier import Supplier
 from src.costs import CostConfig
 from src.recommendation_engine import RecommendationEngine
+from src.recovery_frontier import RiskServiceRecoveryFrontier
 from database import get_db_connection, init_db
 
 # Initialize database on startup
@@ -36,6 +38,19 @@ class SimulationRequest(BaseModel):
     emergency_unit_cost: float = 18.0
     risk_aversion: float = 0.5
     min_service_level: float = 0.95
+
+class RecoveryFrontierRequest(BaseModel):
+    sku: str
+    regular_unit_cost: float = 8.0
+    emergency_unit_cost: float = 18.0
+    regular_lead_time_mean: float = 7.0
+    regular_lead_time_std: float = 2.0
+    emergency_lead_time_mean: float = 2.0
+    emergency_lead_time_std: float = 0.0
+    min_service_level: float = 0.95
+    baseline_emergency_ratio: float = 0.10
+    max_cvar: Optional[float] = None
+    num_simulations: int = 100
 
 class InventoryItem(BaseModel):
     sku: str
@@ -190,6 +205,72 @@ def run_simulation(request: SimulationRequest):
             "best_plan": best_plan,
             "all_plans": evaluated_plans
         }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/recovery-frontier")
+def get_recovery_frontier(request: RecoveryFrontierRequest):
+    try:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # 1. Fetch parameters from database
+        conn = get_db_connection()
+        item_row = conn.execute(
+            "SELECT holding_cost, backorder_cost, reorder_point, order_quantity, name, category FROM inventory WHERE sku=?",
+            (request.sku,)
+        ).fetchone()
+        conn.close()
+        
+        if not item_row:
+            raise HTTPException(status_code=404, detail=f"Product with SKU {request.sku} not found in database.")
+            
+        holding_cost = item_row['holding_cost']
+        backorder_cost = item_row['backorder_cost']
+        reorder_point = item_row['reorder_point']
+        order_quantity = item_row['order_quantity']
+        product_name = item_row['name']
+        
+        # 2. Load demand for SKU
+        data_path = os.path.join(base_dir, 'data', 'raw', 'sales_train_evaluation.csv')
+        base_demand, product_info = load_m5_product_demand(data_path, sku=request.sku, number_of_days=365)
+        
+        # 3. Load error variance from trained XGBoost model
+        model_file = os.path.join(base_dir, 'experiments', 'xgboost_forecast.pkl')
+        try:
+            with open(model_file, 'rb') as f:
+                model_data = pickle.load(f)
+                error_var = model_data['error_variance']
+        except FileNotFoundError:
+            error_var = 10.0
+            
+        # 4. Instantiate and execute the Risk-Service Recovery Frontier algorithm (Contribution D)
+        frontier_engine = RiskServiceRecoveryFrontier(
+            base_demand=base_demand,
+            error_variance=error_var,
+            regular_unit_cost=request.regular_unit_cost,
+            emergency_unit_cost=request.emergency_unit_cost,
+            base_lead_time_mean=request.regular_lead_time_mean,
+            base_lead_time_std=request.regular_lead_time_std,
+            emergency_lead_time_mean=request.emergency_lead_time_mean,
+            emergency_lead_time_std=request.emergency_lead_time_std,
+            holding_cost=holding_cost,
+            backorder_cost=backorder_cost,
+            reorder_point=reorder_point,
+            order_quantity=order_quantity,
+            num_simulations=request.num_simulations,
+            min_service_level=request.min_service_level,
+            baseline_emergency_ratio=request.baseline_emergency_ratio,
+            max_cvar=request.max_cvar
+        )
+        
+        results = frontier_engine.execute_recovery_frontier_analysis()
+        results["product_info"] = {
+            "sku": request.sku,
+            "name": product_name,
+            "category": item_row['category']
+        }
+        return results
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

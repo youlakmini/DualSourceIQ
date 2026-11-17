@@ -8,6 +8,7 @@ import SimulationView from './components/SimulationView';
 import WhatIfView from './components/WhatIfView';
 import ForecastView from './components/ForecastView';
 import ReportsView from './components/ReportsView';
+import RecoveryFrontierView from './components/RecoveryFrontierView';
 import OptiMascot from './components/OptiMascot';
 import { RefreshIcon } from './components/Icons';
 
@@ -392,6 +393,10 @@ function App() {
               forecastBanner={forecastBanner}
               onDismissBanner={() => setForecastBanner(null)}
             />
+          )}
+
+          {activeTab === 'rsrf' && (
+            <RecoveryFrontierView inventory={inventory} />
           )}
 
           {activeTab === 'forecast' && (

@@ -6,7 +6,8 @@ import {
   TrendingIcon, 
   FlaskIcon, 
   FileTextIcon, 
-  UserIcon 
+  UserIcon,
+  ShieldCheckIcon
 } from './Icons';
 
 function Sidebar({ activeTab, setActiveTab }) {
@@ -16,6 +17,7 @@ function Sidebar({ activeTab, setActiveTab }) {
     { id: 'simulation', label: 'Manage Supplier Parameters', icon: <UsersIcon /> },
     { id: 'forecast', label: 'View Demand Forecast', icon: <TrendingIcon /> },
     { id: 'whatif', label: 'Run What-if Analysis', icon: <FlaskIcon /> },
+    { id: 'rsrf', label: 'Recovery Frontier (RSRF)', icon: <ShieldCheckIcon /> },
     { id: 'reports', label: 'Reports & Metrics', icon: <FileTextIcon /> },
   ];
 

@@ -56,6 +56,12 @@ function OptiMascot({ activeTab, simLoading }) {
       "The blue dashed line shows ML predictions, matching closely with green actuals.",
       "Filter by 'Next 30 Days' or 'All History' to inspect seasonal demand patterns."
     ],
+    rsrf: [
+      "Welcome to Contribution D: The Risk–Service Recovery Frontier (RSRF)!",
+      "The solid blue curve represents your non-dominated Pareto frontier between Cost and Fill Rate.",
+      "Toggle between Normal, Moderate, and Severe delays to see the required recovery cost (ΔC).",
+      "Notice how the green dot shows the optimal allocation restoring your 95% service target!"
+    ],
     reports: [
       "Audit & compliance ready! Export your simulation and forecast runs to CSV.",
       "All 500 Monte Carlo paths and CVaR calculations can be reviewed in executive briefs."

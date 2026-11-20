@@ -121,7 +121,7 @@ function RecoveryFrontierView({ inventory }) {
   }).join(' ');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: 'calc(100vh - 120px)', minHeight: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', height: '100%', flex: 1, minHeight: 0, overflow: 'hidden' }}>
       {/* Top Filter Bar */}
       <div className="dashboard-card" style={{ padding: '8px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
@@ -457,83 +457,90 @@ function RecoveryFrontierView({ inventory }) {
         </div>
 
         {/* Right Column: Resilience & Constrained Recovery Decision Panel */}
-        <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 16px' }}>
-          <h3 className="card-title" style={{ margin: '0 0 4px 0', fontSize: '15px' }}>
-            Constrained Recovery Decision
-          </h3>
-          <p className="card-subtitle" style={{ margin: '0 0 10px 0', fontSize: '11.5px' }}>
-            Least-cost allocation to restore service level under <strong>{currentScenario?.metadata?.name}</strong>
-          </p>
+        <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '8px 12px', overflow: 'hidden' }}>
+          <div style={{ flexShrink: 0, marginBottom: '5px' }}>
+            <h3 className="card-title" style={{ margin: 0, fontSize: '14px' }}>
+              Constrained Recovery Decision
+            </h3>
+            <p className="card-subtitle" style={{ margin: '1px 0 0 0', fontSize: '10.5px' }}>
+              Optimal allocation to restore service under <strong>{currentScenario?.metadata?.name}</strong>
+            </p>
+          </div>
 
-          {/* 4 Summary Metric Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
-            <div style={{ padding: '8px 10px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Baseline Service</span>
-              <h3 style={{ margin: '2px 0 0 0', fontSize: '16px', fontWeight: 700, color: (recoverySummary?.baseline_fill_rate_pct || 100) < minServiceLevel * 100 ? '#ef4444' : '#10b981' }}>
+          {/* 4 Summary Metric Cards (Horizontal 4-Column Strip to Save Space) */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '5px', marginBottom: '6px', flexShrink: 0 }}>
+            <div style={{ padding: '5px 6px', background: '#f8fafc', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '8.5px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Baseline Service</span>
+              <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: (recoverySummary?.baseline_fill_rate_pct || 100) < minServiceLevel * 100 ? '#ef4444' : '#10b981' }}>
                 {recoverySummary ? `${recoverySummary.baseline_fill_rate_pct}%` : '--'}
               </h3>
-              <span style={{ fontSize: '10px', color: '#64748b' }}>At 90/10 Allocation</span>
+              <span style={{ fontSize: '8.5px', color: '#64748b', display: 'block', whiteSpace: 'nowrap' }}>At 90/10 Baseline</span>
             </div>
 
-            <div style={{ padding: '8px 10px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Restored Service</span>
-              <h3 style={{ margin: '2px 0 0 0', fontSize: '16px', fontWeight: 700, color: '#10b981' }}>
+            <div style={{ padding: '5px 6px', background: '#f8fafc', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '8.5px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Restored Service</span>
+              <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: '#10b981' }}>
                 {recoverySummary ? `${recoverySummary.restored_fill_rate_pct}%` : '--'}
               </h3>
-              <span style={{ fontSize: '10px', color: '#059669', fontWeight: 500 }}>Target: &ge; {Math.round(minServiceLevel * 100)}%</span>
+              <span style={{ fontSize: '8.5px', color: '#059669', fontWeight: 500, display: 'block', whiteSpace: 'nowrap' }}>Target: &ge; {Math.round(minServiceLevel * 100)}%</span>
             </div>
 
-            <div style={{ padding: '8px 10px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Recovery Cost (&Delta;C)</span>
-              <h3 style={{ margin: '2px 0 0 0', fontSize: '16px', fontWeight: 700, color: '#2563eb' }}>
+            <div style={{ padding: '5px 6px', background: '#eff6ff', borderRadius: '5px', border: '1px solid #bfdbfe' }}>
+              <span style={{ fontSize: '8.5px', color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Recovery (&Delta;C)</span>
+              <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: '#2563eb' }}>
                 {recoverySummary?.recovery_cost_premium !== null && recoverySummary?.recovery_cost_premium !== undefined
-                  ? `+$${recoverySummary.recovery_cost_premium.toLocaleString()}`
+                  ? recoverySummary.recovery_cost_premium === 0
+                    ? '$0.00'
+                    : `+$${recoverySummary.recovery_cost_premium.toLocaleString()}`
                   : 'N/A'}
               </h3>
-              <span style={{ fontSize: '10px', color: '#2563eb' }}>Cost to restore service</span>
+              <span style={{ fontSize: '8.5px', color: '#1e40af', display: 'block', whiteSpace: 'nowrap' }}>Emergency spend</span>
             </div>
 
-            <div style={{ padding: '8px 10px', background: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Downside Risk (CVaR)</span>
-              <h3 style={{ margin: '2px 0 0 0', fontSize: '16px', fontWeight: 700, color: '#0f172a' }}>
-                {recoverySummary?.recovery_cvar
-                  ? `$${Math.round(recoverySummary.recovery_cvar).toLocaleString()}`
-                  : '--'}
+            <div style={{ padding: '5px 6px', background: '#f8fafc', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
+              <span style={{ fontSize: '8.5px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Penalty Avoided</span>
+              <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: '#16a34a' }}>
+                {recoverySummary?.penalty_avoided
+                  ? `-$${Math.round(recoverySummary.penalty_avoided).toLocaleString()}`
+                  : '$0.00'}
               </h3>
-              <span style={{ fontSize: '10px', color: '#64748b' }}>Worst 5% tail risk</span>
+              <span style={{ fontSize: '8.5px', color: '#64748b', display: 'block', whiteSpace: 'nowrap' }}>Shortage avoided</span>
             </div>
           </div>
 
-          {/* Core Decision Recommendation Callout */}
+          {/* Compact Decision Recommendation Callout */}
           <div style={{
             background: recoverySummary?.is_feasible ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' : '#fef2f2',
             border: `1px solid ${recoverySummary?.is_feasible ? '#86efac' : '#fca5a5'}`,
-            borderRadius: '6px',
-            padding: '10px 12px',
-            marginBottom: '10px',
-            fontSize: '12px',
-            lineHeight: 1.45,
-            color: recoverySummary?.is_feasible ? '#166534' : '#991b1b'
+            borderRadius: '5px',
+            padding: '5px 8px',
+            marginBottom: '6px',
+            fontSize: '10.5px',
+            lineHeight: 1.35,
+            color: recoverySummary?.is_feasible ? '#166534' : '#991b1b',
+            flexShrink: 0
           }}>
-            <div style={{ fontWeight: 700, marginBottom: '3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span>{recoverySummary?.is_feasible ? '✅ Recovery Policy Recommendation' : '⚠️ Infeasibility Alert'}</span>
+            <div style={{ fontWeight: 700, marginBottom: '1px' }}>
+              {recoverySummary?.is_feasible ? '✅ Recovery Recommendation' : '⚠️ Infeasibility Alert'}
             </div>
             {recoverySummary?.recommendation_text || 'Evaluating recovery plans...'}
           </div>
 
-          {/* 3-Tier Delay Severity Comparison Table */}
-          <h4 style={{ margin: '6px 0 6px 0', fontSize: '12.5px', fontWeight: 700, color: '#0f172a' }}>
-            Cross-Severity Resilience Table
-          </h4>
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '6px' }}>
-            <table className="modern-table">
-              <thead style={{ position: 'sticky', top: 0, zIndex: 2, background: '#f8fafc' }}>
+          {/* 3-Tier Delay Severity Comparison Table (Fixed Fit, No Scrolling Needed) */}
+          <div style={{ flexShrink: 0, marginBottom: '2px' }}>
+            <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>
+              Cross-Severity Resilience Table
+            </h4>
+          </div>
+          <div style={{ border: '1px solid #e2e8f0', borderRadius: '5px', overflow: 'hidden', flexShrink: 0 }}>
+            <table className="modern-table" style={{ margin: 0, fontSize: '10.5px', width: '100%' }}>
+              <thead style={{ background: '#f8fafc' }}>
                 <tr>
-                  <th>Delay Scenario</th>
-                  <th>Baseline Service</th>
-                  <th>Recovery Plan</th>
-                  <th>Restored</th>
-                  <th>Premium (&Delta;C)</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Delay Scenario</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Baseline</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Recovery Plan</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Restored</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Premium (&Delta;C)</th>
                 </tr>
               </thead>
               <tbody>
@@ -543,22 +550,33 @@ function RecoveryFrontierView({ inventory }) {
                   const isCurrent = scKey === activeSeverity;
 
                   return (
-                    <tr key={scKey} style={{ background: isCurrent ? '#f0f9ff' : 'transparent', fontWeight: isCurrent ? 600 : 'normal' }}>
-                      <td>
-                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: scKey === 'normal' ? '#10b981' : scKey === 'moderate' ? '#f59e0b' : '#ef4444', marginRight: '6px' }}></span>
+                    <tr
+                      key={scKey}
+                      onClick={() => setActiveSeverity(scKey)}
+                      style={{
+                        background: isCurrent ? '#eff6ff' : 'transparent',
+                        fontWeight: isCurrent ? 600 : 'normal',
+                        cursor: 'pointer',
+                        borderLeft: isCurrent ? '3px solid #2563eb' : '3px solid transparent',
+                        transition: 'all 0.15s'
+                      }}
+                      title="Click to view this scenario on chart"
+                    >
+                      <td style={{ padding: '3.5px 6px' }}>
+                        <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: scKey === 'normal' ? '#10b981' : scKey === 'moderate' ? '#f59e0b' : '#ef4444', marginRight: '5px' }}></span>
                         {sc.metadata.name}
                       </td>
-                      <td style={{ color: rec.baseline_fill_rate_pct < minServiceLevel * 100 ? '#ef4444' : '#10b981' }}>
+                      <td style={{ padding: '3.5px 6px', color: rec.baseline_fill_rate_pct < minServiceLevel * 100 ? '#ef4444' : '#10b981' }}>
                         {rec.baseline_fill_rate_pct}%
                       </td>
-                      <td>
+                      <td style={{ padding: '3.5px 6px' }}>
                         <strong>{rec.recovery_plan.label}</strong>
                       </td>
-                      <td style={{ color: '#059669' }}>
+                      <td style={{ padding: '3.5px 6px', color: '#059669', fontWeight: 600 }}>
                         {rec.restored_fill_rate_pct}%
                       </td>
-                      <td>
-                        {rec.recovery_cost_premium !== null
+                      <td style={{ padding: '3.5px 6px', fontWeight: 700, color: rec.recovery_cost_premium > 0 ? '#2563eb' : '#64748b' }}>
+                        {rec.recovery_cost_premium !== null && rec.recovery_cost_premium !== undefined
                           ? rec.recovery_cost_premium === 0
                             ? '$0.00'
                             : `+$${rec.recovery_cost_premium.toLocaleString()}`
@@ -569,6 +587,10 @@ function RecoveryFrontierView({ inventory }) {
                 })}
               </tbody>
             </table>
+          </div>
+
+          <div style={{ marginTop: '4px', fontSize: '9px', color: '#64748b', flexShrink: 0 }}>
+            💡 <em>Click any row above to inspect its Pareto curve on the left.</em>
           </div>
         </div>
       </div>

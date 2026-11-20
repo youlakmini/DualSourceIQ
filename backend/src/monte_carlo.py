@@ -103,6 +103,9 @@ def calculate_risk_metrics(results_list, cvar_alpha=0.05, verbose=False):
         print("="*45)
     
     avg_yearly_demand = df_results['total_demand'].mean()
+    expected_purchase_cost = df_results['purchase_cost'].mean() if 'purchase_cost' in df_results else 0.0
+    expected_holding_cost = df_results['holding_cost'].mean() if 'holding_cost' in df_results else 0.0
+    expected_backorder_cost = df_results['backorder_cost'].mean() if 'backorder_cost' in df_results else 0.0
     
     # Extract max lead times safely
     max_regular_delay = max([r.get('max_lead_times', {}).get('regular', 0) for r in results_list]) if results_list else 0
@@ -110,6 +113,9 @@ def calculate_risk_metrics(results_list, cvar_alpha=0.05, verbose=False):
     
     return {
         "expected_cost": float(expected_cost),
+        "expected_purchase_cost": float(expected_purchase_cost),
+        "expected_holding_cost": float(expected_holding_cost),
+        "expected_backorder_cost": float(expected_backorder_cost),
         "expected_fill_rate": float(expected_fill_rate),
         "stockout_prob": float(stockout_prob),
         "cvar": float(cvar),

@@ -139,9 +139,15 @@ class RiskServiceRecoveryFrontier:
         scenarios = custom_scenarios or self.DEFAULT_DELAY_SCENARIOS
         candidate_allocations = self.generate_candidate_allocations()
 
+        # Process 'normal' first so normal baseline cost is the benchmark for recovery premium (ΔC)
+        ordered_keys = ['normal', 'moderate', 'severe'] + [k for k in scenarios.keys() if k not in ['normal', 'moderate', 'severe']]
         scenario_results = {}
+        normal_baseline = None
 
-        for scenario_key, scenario_meta in scenarios.items():
+        for scenario_key in ordered_keys:
+            if scenario_key not in scenarios:
+                continue
+            scenario_meta = scenarios[scenario_key]
             delay_offset = scenario_meta.get("lead_time_offset", 0.0)
             std_mult = scenario_meta.get("std_multiplier", 1.0)
 
@@ -189,6 +195,9 @@ class RiskServiceRecoveryFrontier:
                     "emergency_ratio": emg_ratio,
                     "label": f"{int(reg_ratio*100)}% Regular / {int(emg_ratio*100)}% Emergency",
                     "expected_cost": round(metrics["expected_cost"], 2),
+                    "expected_purchase_cost": round(metrics.get("expected_purchase_cost", 0.0), 2),
+                    "expected_holding_cost": round(metrics.get("expected_holding_cost", 0.0), 2),
+                    "expected_backorder_cost": round(metrics.get("expected_backorder_cost", 0.0), 2),
                     "expected_fill_rate": round(metrics["expected_fill_rate"], 4),
                     "fill_rate_pct": round(metrics["expected_fill_rate"] * 100, 2),
                     "stockout_prob_pct": round(metrics["stockout_prob"] * 100, 2),
@@ -201,6 +210,8 @@ class RiskServiceRecoveryFrontier:
 
             # Identify Baseline Allocation
             baseline_alloc = min(evaluations, key=lambda e: abs(e['emergency_ratio'] - self.baseline_emergency_ratio))
+            if scenario_key == 'normal':
+                normal_baseline = baseline_alloc
 
             # Solve Constrained Recovery Optimization
             # min E[C(x, d)] subject to F(x, d) >= F_min and CVaR <= R_max
@@ -212,9 +223,27 @@ class RiskServiceRecoveryFrontier:
 
             if feasible_set:
                 recovery_alloc = min(feasible_set, key=lambda e: e['expected_cost'])
-                # Calculate recovery cost premium
-                delta_c = max(0.0, recovery_alloc['expected_cost'] - baseline_alloc['expected_cost'])
                 service_restored = bool(baseline_alloc['fill_rate_pct'] < (self.min_service_level * 100))
+
+                # Calculate recovery cost premium (ΔC):
+                # When regular suppliers are delayed, shifting orders to the emergency supplier increases procurement spend.
+                # ΔC reflects the additional operational spend required to restore service.
+                if service_restored and recovery_alloc['emergency_ratio'] > baseline_alloc['emergency_ratio']:
+                    normal_ref_cost = normal_baseline['expected_cost'] if normal_baseline else baseline_alloc['expected_cost']
+                    cost_diff_vs_normal = recovery_alloc['expected_cost'] - normal_ref_cost
+                    purchase_diff = recovery_alloc['expected_purchase_cost'] - baseline_alloc['expected_purchase_cost']
+
+                    delta_c = max(purchase_diff, cost_diff_vs_normal, 0.0)
+                    if delta_c <= 0.0:
+                        # Direct emergency surcharge: extra volume shifted * price premium ($18 - $8)
+                        extra_emg_ratio = recovery_alloc['emergency_ratio'] - baseline_alloc['emergency_ratio']
+                        annual_demand_est = baseline_alloc.get('expected_purchase_cost', 8000) / max(1.0, self.regular_unit_cost)
+                        delta_c = round(annual_demand_est * extra_emg_ratio * (self.emergency_unit_cost - self.regular_unit_cost), 2)
+                else:
+                    delta_c = 0.0
+
+                # Penalty avoided: difference between baseline disaster cost (with backorders) and recovery cost
+                penalty_avoided = max(0.0, baseline_alloc['expected_cost'] - recovery_alloc['expected_cost'])
 
                 recovery_summary = {
                     "is_feasible": True,
@@ -222,6 +251,7 @@ class RiskServiceRecoveryFrontier:
                     "baseline": baseline_alloc,
                     "recovery_plan": recovery_alloc,
                     "recovery_cost_premium": round(delta_c, 2),
+                    "penalty_avoided": round(penalty_avoided, 2),
                     "baseline_fill_rate_pct": baseline_alloc['fill_rate_pct'],
                     "restored_fill_rate_pct": recovery_alloc['fill_rate_pct'],
                     "baseline_cvar": baseline_alloc['cvar'],
@@ -229,7 +259,7 @@ class RiskServiceRecoveryFrontier:
                     "recommendation_text": (
                         f"Under {scenario_meta['name']}, baseline service drops to {baseline_alloc['fill_rate_pct']}%. "
                         f"Reallocating to {recovery_alloc['label']} restores service to {recovery_alloc['fill_rate_pct']}% "
-                        f"(Recovery Premium: +${delta_c:,.2f})."
+                        f"(Recovery Premium: +${delta_c:,.2f}, avoiding ${penalty_avoided:,.2f} in shortage losses)."
                         if service_restored else
                         f"Under {scenario_meta['name']}, baseline {baseline_alloc['label']} maintains {baseline_alloc['fill_rate_pct']}% service level. No emergency recovery shift required."
                     )

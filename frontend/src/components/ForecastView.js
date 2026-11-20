@@ -591,7 +591,7 @@ function ForecastView({ onTestInWhatIf }) {
                     <th>Period</th>
                     <th>Forecast</th>
                     <th>Actual</th>
-                    <th>Likely Range (Min – Max)</th>
+                    <th>Likely Range (Min - Max)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -615,7 +615,7 @@ function ForecastView({ onTestInWhatIf }) {
                         )}
                       </td>
                       <td style={{ fontFamily: 'monospace', fontSize: '11.5px', color: '#334155' }}>
-                        {d.lowerBound.toLocaleString()} &ndash; {d.upperBound.toLocaleString()} units
+                        {d.lowerBound.toLocaleString()} - {d.upperBound.toLocaleString()} units
                       </td>
                     </tr>
                   ))}

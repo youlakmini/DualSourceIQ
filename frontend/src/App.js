@@ -325,9 +325,9 @@ function App() {
             <div>
               <h1 className="page-title">
                 {activeTab === 'dashboard' && 'Inventory Manager Dashboard'}
-                {activeTab === 'inventory' && 'Manage Inventory Data (UC02)'}
-                {activeTab === 'simulation' && 'Manage Supplier Parameters & Risk Simulation (UC07)'}
-                {activeTab === 'whatif' && 'Run What-if Analysis (UC05)'}
+                {activeTab === 'inventory' && 'Manage Inventory Data'}
+                {activeTab === 'simulation' && 'Supplier Parameters & Risk Simulation'}
+                {activeTab === 'whatif' && 'What-If Scenario Analysis'}
                 {activeTab === 'forecast' && 'Demand Forecast'}
                 {activeTab === 'reports' && 'Reports & Performance Metrics'}
               </h1>

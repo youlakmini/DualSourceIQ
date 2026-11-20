@@ -194,16 +194,22 @@ def run_simulation(request: SimulationRequest):
             
         feasible_plans = [p for p in evaluated_plans if p['is_feasible']]
         
-        if not feasible_plans:
-            raise HTTPException(status_code=400, detail="No feasible plans found that meet the minimum service level.")
+        if feasible_plans:
+            ranked_plans = sorted(feasible_plans, key=lambda x: x['risk_adjusted_score'])
+            best_plan = ranked_plans[0]
+            is_target_met = True
+        else:
+            # Under extreme disruption (e.g. prolonged lead times + demand surge), no plan reaches min service target.
+            # Select the best mitigation plan that maximizes customer service level.
+            best_plan = max(evaluated_plans, key=lambda x: (x['expected_fill_rate'], -x['expected_cost']))
+            is_target_met = False
             
-        ranked_plans = sorted(feasible_plans, key=lambda x: x['risk_adjusted_score'])
-        best_plan = ranked_plans[0]
-        
         return {
             "product_info": product_info,
             "best_plan": best_plan,
-            "all_plans": evaluated_plans
+            "all_plans": evaluated_plans,
+            "is_target_met": is_target_met,
+            "target_service_level_pct": round(request.min_service_level * 100, 1)
         }
         
     except Exception as e:

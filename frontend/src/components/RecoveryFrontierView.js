@@ -4,7 +4,6 @@ function RecoveryFrontierView({ inventory }) {
   const [selectedSku, setSelectedSku] = useState('');
   const [minServiceLevel, setMinServiceLevel] = useState(0.95);
   const [activeSeverity, setActiveSeverity] = useState('severe'); // 'normal' | 'moderate' | 'severe'
-  const [showCandidates, setShowCandidates] = useState(true);
   const [frontierData, setFrontierData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -257,16 +256,10 @@ function RecoveryFrontierView({ inventory }) {
                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
                 Recommended (Green)
               </span>
-              <label style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'pointer', userSelect: 'none', margin: 0 }} title="Toggle visibility of discarded sub-optimal candidate allocations">
-                <input
-                  type="checkbox"
-                  checked={showCandidates}
-                  onChange={(e) => setShowCandidates(e.target.checked)}
-                  style={{ width: '12px', height: '12px', cursor: 'pointer', margin: 0 }}
-                />
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Discarded candidate allocations with higher cost or lower service">
                 <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#94a3b8', display: 'inline-block', opacity: 0.7 }}></span>
                 Sub-Optimal Candidates
-              </label>
+              </span>
             </div>
           </div>
 
@@ -366,7 +359,7 @@ function RecoveryFrontierView({ inventory }) {
                 )}
 
                 {/* Render Candidate Points (Sub-Optimal Splits, dim background) */}
-                {showCandidates && allPoints.filter(p => !p.is_pareto).map((p, idx) => (
+                {allPoints.filter(p => !p.is_pareto).map((p, idx) => (
                   <circle
                     key={`dom-${idx}`}
                     cx={getX(p.expected_fill_rate)}

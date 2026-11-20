@@ -1,397 +1,397 @@
 === PLAN: 100% Regular / 0% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 818 units
-Max Delay for Regular Supplier = 16 days
-→ Stockout occurred (Fill Rate: 82.03%)
-→ Total Cost = $55,809.10
+Total Yearly Demand = 552 units
+Max Delay for Regular Supplier = 23 days
+→ Stockout occurred (Fill Rate: 70.11%)
+→ Total Cost = $67,898.60
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 859 units
-Max Delay for Regular Supplier = 22 days
-→ Stockout occurred (Fill Rate: 74.04%)
-→ Total Cost = $95,201.20
+Total Yearly Demand = 564 units
+Max Delay for Regular Supplier = 20 days
+→ Stockout occurred (Fill Rate: 73.94%)
+→ Total Cost = $52,175.60
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 786 units
-Max Delay for Regular Supplier = 18 days
-→ Stockout occurred (Fill Rate: 80.53%)
-→ Total Cost = $52,596.00
+Total Yearly Demand = 514 units
+Max Delay for Regular Supplier = 22 days
+→ Stockout occurred (Fill Rate: 78.40%)
+→ Total Cost = $49,414.80
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 840 units
+Total Yearly Demand = 509 units
 Max Delay for Regular Supplier = 21 days
-→ Stockout occurred (Fill Rate: 71.55%)
-→ Total Cost = $96,851.00
+→ Stockout occurred (Fill Rate: 82.71%)
+→ Total Cost = $34,655.40
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 733 units
-Max Delay for Regular Supplier = 23 days
+Total Yearly Demand = 542 units
+Max Delay for Regular Supplier = 30 days
 → Stockout occurred (Fill Rate: 68.08%)
-→ Total Cost = $105,204.00
+→ Total Cost = $79,485.40
 
 === PLAN: 90% Regular / 9% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 834 units
-Max Delay for Regular Supplier = 24 days
+Total Yearly Demand = 546 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 80.70%)
-→ Total Cost = $66,378.60
+→ Stockout occurred (Fill Rate: 84.98%)
+→ Total Cost = $25,109.80
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 814 units
-Max Delay for Regular Supplier = 18 days
+Total Yearly Demand = 580 units
+Max Delay for Regular Supplier = 24 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 81.70%)
-→ Total Cost = $46,216.70
+→ Stockout occurred (Fill Rate: 71.72%)
+→ Total Cost = $67,605.40
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 762 units
-Max Delay for Regular Supplier = 20 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 92.78%)
-→ Total Cost = $21,099.70
-
-Simulation 4 (365 Days)
-Total Yearly Demand = 733 units
-Max Delay for Regular Supplier = 19 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 91.68%)
-→ Total Cost = $25,083.30
-
-Simulation 5 (365 Days)
-Total Yearly Demand = 807 units
+Total Yearly Demand = 455 units
 Max Delay for Regular Supplier = 25 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 76.46%)
-→ Total Cost = $67,432.20
+→ Stockout occurred (Fill Rate: 83.96%)
+→ Total Cost = $26,535.40
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 586 units
+Max Delay for Regular Supplier = 18 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 84.64%)
+→ Total Cost = $30,330.40
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 572 units
+Max Delay for Regular Supplier = 20 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 77.27%)
+→ Total Cost = $41,475.80
 
 === PLAN: 80% Regular / 19% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 819 units
-Max Delay for Regular Supplier = 27 days
+Total Yearly Demand = 512 units
+Max Delay for Regular Supplier = 20 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 87.67%)
-→ Total Cost = $29,725.30
+→ Stockout occurred (Fill Rate: 83.98%)
+→ Total Cost = $30,124.00
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 808 units
-Max Delay for Regular Supplier = 22 days
+Total Yearly Demand = 552 units
+Max Delay for Regular Supplier = 23 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 89.98%)
-→ Total Cost = $34,607.10
+→ Stockout occurred (Fill Rate: 82.97%)
+→ Total Cost = $32,081.20
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 791 units
-Max Delay for Regular Supplier = 26 days
+Total Yearly Demand = 539 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 84.70%)
-→ Total Cost = $42,004.50
+→ Stockout occurred (Fill Rate: 90.35%)
+→ Total Cost = $21,917.40
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 748 units
-Max Delay for Regular Supplier = 16 days
+Total Yearly Demand = 569 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 96.52%)
-→ Total Cost = $11,972.60
+→ Stockout occurred (Fill Rate: 84.89%)
+→ Total Cost = $25,676.40
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 794 units
-Max Delay for Regular Supplier = 14 days
+Total Yearly Demand = 589 units
+Max Delay for Regular Supplier = 22 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 93.58%)
-→ Total Cost = $14,963.50
+→ Stockout occurred (Fill Rate: 74.70%)
+→ Total Cost = $52,752.40
 
 === PLAN: 70% Regular / 30% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 793 units
-Max Delay for Regular Supplier = 21 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 94.33%)
-→ Total Cost = $18,730.00
-
-Simulation 2 (365 Days)
-Total Yearly Demand = 763 units
-Max Delay for Regular Supplier = 20 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 96.85%)
-→ Total Cost = $13,959.50
-
-Simulation 3 (365 Days)
-Total Yearly Demand = 773 units
-Max Delay for Regular Supplier = 18 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 94.31%)
-→ Total Cost = $16,610.10
-
-Simulation 4 (365 Days)
-Total Yearly Demand = 771 units
-Max Delay for Regular Supplier = 17 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 94.16%)
-→ Total Cost = $16,166.40
-
-Simulation 5 (365 Days)
-Total Yearly Demand = 813 units
+Total Yearly Demand = 596 units
 Max Delay for Regular Supplier = 24 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 97.79%)
-→ Total Cost = $14,006.30
+→ Stockout occurred (Fill Rate: 87.75%)
+→ Total Cost = $24,122.80
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 587 units
+Max Delay for Regular Supplier = 24 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 80.75%)
+→ Total Cost = $36,785.20
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 574 units
+Max Delay for Regular Supplier = 20 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 96.52%)
+→ Total Cost = $10,497.20
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 536 units
+Max Delay for Regular Supplier = 22 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 94.40%)
+→ Total Cost = $12,116.60
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 614 units
+Max Delay for Regular Supplier = 21 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 90.55%)
+→ Total Cost = $21,174.60
 
 === PLAN: 60% Regular / 40% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 838 units
-Max Delay for Regular Supplier = 17 days
+Total Yearly Demand = 570 units
+Max Delay for Regular Supplier = 23 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.16%)
-→ Total Cost = $11,336.80
+→ Stockout occurred (Fill Rate: 95.09%)
+→ Total Cost = $13,701.40
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 795 units
-Max Delay for Regular Supplier = 18 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.25%)
-→ Total Cost = $11,375.40
-
-Simulation 3 (365 Days)
-Total Yearly Demand = 860 units
-Max Delay for Regular Supplier = 21 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 94.88%)
-→ Total Cost = $16,275.20
-
-Simulation 4 (365 Days)
-Total Yearly Demand = 787 units
-Max Delay for Regular Supplier = 24 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 96.70%)
-→ Total Cost = $14,189.50
-
-Simulation 5 (365 Days)
-Total Yearly Demand = 855 units
+Total Yearly Demand = 528 units
 Max Delay for Regular Supplier = 22 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 95.91%)
-→ Total Cost = $17,481.10
+→ Stockout occurred (Fill Rate: 93.18%)
+→ Total Cost = $11,873.00
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 583 units
+Max Delay for Regular Supplier = 22 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 95.88%)
+→ Total Cost = $12,493.00
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 573 units
+Max Delay for Regular Supplier = 25 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 92.50%)
+→ Total Cost = $14,236.20
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 625 units
+Max Delay for Regular Supplier = 17 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 95.04%)
+→ Total Cost = $13,538.60
 
 === PLAN: 50% Regular / 50% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 813 units
-Max Delay for Regular Supplier = 24 days
+Total Yearly Demand = 529 units
+Max Delay for Regular Supplier = 18 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.15%)
-→ Total Cost = $13,300.20
+→ Stockout occurred (Fill Rate: 97.92%)
+→ Total Cost = $8,325.60
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 776 units
-Max Delay for Regular Supplier = 19 days
+Total Yearly Demand = 557 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ No stockouts occurred (100% Fill Rate)
-→ Total Cost = $10,569.00
+→ Stockout occurred (Fill Rate: 98.03%)
+→ Total Cost = $10,440.20
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 833 units
-Max Delay for Regular Supplier = 20 days
+Total Yearly Demand = 614 units
+Max Delay for Regular Supplier = 16 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.04%)
-→ Total Cost = $12,284.90
+→ Stockout occurred (Fill Rate: 97.88%)
+→ Total Cost = $10,215.00
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 789 units
+Total Yearly Demand = 531 units
 Max Delay for Regular Supplier = 20 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.61%)
-→ Total Cost = $11,274.50
+→ Stockout occurred (Fill Rate: 99.25%)
+→ Total Cost = $8,389.40
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 829 units
-Max Delay for Regular Supplier = 26 days
+Total Yearly Demand = 564 units
+Max Delay for Regular Supplier = 19 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 93.97%)
-→ Total Cost = $23,170.20
+→ Stockout occurred (Fill Rate: 96.81%)
+→ Total Cost = $10,754.60
 
 === PLAN: 40% Regular / 60% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 793 units
-Max Delay for Regular Supplier = 29 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.36%)
-→ Total Cost = $13,338.70
-
-Simulation 2 (365 Days)
-Total Yearly Demand = 808 units
+Total Yearly Demand = 515 units
 Max Delay for Regular Supplier = 22 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.50%)
-→ Total Cost = $12,768.80
+→ Stockout occurred (Fill Rate: 97.28%)
+→ Total Cost = $9,508.20
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 566 units
+Max Delay for Regular Supplier = 20 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 98.59%)
+→ Total Cost = $9,210.80
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 821 units
-Max Delay for Regular Supplier = 16 days
+Total Yearly Demand = 540 units
+Max Delay for Regular Supplier = 23 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.03%)
-→ Total Cost = $13,303.30
+→ Stockout occurred (Fill Rate: 99.44%)
+→ Total Cost = $8,548.80
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 784 units
-Max Delay for Regular Supplier = 16 days
+Total Yearly Demand = 560 units
+Max Delay for Regular Supplier = 20 days
 Max Delay for Emergency Supplier = 2.0 days
 → Stockout occurred (Fill Rate: 99.11%)
-→ Total Cost = $11,789.70
+→ Total Cost = $9,206.40
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 810 units
-Max Delay for Regular Supplier = 24 days
+Total Yearly Demand = 513 units
+Max Delay for Regular Supplier = 23 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.77%)
-→ Total Cost = $13,230.00
+→ Stockout occurred (Fill Rate: 97.08%)
+→ Total Cost = $10,100.60
 
 === PLAN: 30% Regular / 70% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 740 units
-Max Delay for Regular Supplier = 21 days
+Total Yearly Demand = 598 units
+Max Delay for Regular Supplier = 25 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.59%)
-→ Total Cost = $12,411.90
+→ Stockout occurred (Fill Rate: 97.99%)
+→ Total Cost = $11,006.20
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 846 units
-Max Delay for Regular Supplier = 22 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.53%)
-→ Total Cost = $13,883.10
-
-Simulation 3 (365 Days)
-Total Yearly Demand = 812 units
-Max Delay for Regular Supplier = 22 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.38%)
-→ Total Cost = $13,872.70
-
-Simulation 4 (365 Days)
-Total Yearly Demand = 761 units
-Max Delay for Regular Supplier = 21 days
+Total Yearly Demand = 547 units
+Max Delay for Regular Supplier = 20 days
 Max Delay for Emergency Supplier = 2.0 days
 → No stockouts occurred (100% Fill Rate)
-→ Total Cost = $12,269.70
+→ Total Cost = $9,623.60
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 493 units
+Max Delay for Regular Supplier = 24 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 98.58%)
+→ Total Cost = $8,377.40
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 537 units
+Max Delay for Regular Supplier = 24 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 99.81%)
+→ Total Cost = $8,732.00
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 846 units
-Max Delay for Regular Supplier = 21 days
+Total Yearly Demand = 576 units
+Max Delay for Regular Supplier = 26 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.46%)
-→ Total Cost = $14,342.70
+→ Stockout occurred (Fill Rate: 98.61%)
+→ Total Cost = $10,107.00
 
 === PLAN: 20% Regular / 80% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 746 units
-Max Delay for Regular Supplier = 18 days
+Total Yearly Demand = 587 units
+Max Delay for Regular Supplier = 16 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.79%)
-→ Total Cost = $13,504.40
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,445.40
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 811 units
-Max Delay for Regular Supplier = 29 days
+Total Yearly Demand = 560 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.26%)
-→ Total Cost = $14,793.50
+→ Stockout occurred (Fill Rate: 99.29%)
+→ Total Cost = $10,378.20
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 789 units
-Max Delay for Regular Supplier = 17 days
+Total Yearly Demand = 566 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.49%)
-→ Total Cost = $13,125.40
+→ Stockout occurred (Fill Rate: 99.82%)
+→ Total Cost = $10,276.00
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 769 units
-Max Delay for Regular Supplier = 20 days
+Total Yearly Demand = 578 units
+Max Delay for Regular Supplier = 25 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.70%)
-→ Total Cost = $13,503.90
+→ Stockout occurred (Fill Rate: 99.48%)
+→ Total Cost = $10,291.60
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 796 units
-Max Delay for Regular Supplier = 32 days
+Total Yearly Demand = 552 units
+Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.50%)
-→ Total Cost = $14,728.30
+→ Stockout occurred (Fill Rate: 98.73%)
+→ Total Cost = $10,541.80
 
 === PLAN: 10% Regular / 90% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 828 units
-Max Delay for Regular Supplier = 14 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.76%)
-→ Total Cost = $15,580.00
-
-Simulation 2 (365 Days)
-Total Yearly Demand = 782 units
-Max Delay for Regular Supplier = 14 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.98%)
-→ Total Cost = $14,210.00
-
-Simulation 3 (365 Days)
-Total Yearly Demand = 867 units
-Max Delay for Regular Supplier = 22 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.73%)
-→ Total Cost = $15,996.30
-
-Simulation 4 (365 Days)
-Total Yearly Demand = 788 units
-Max Delay for Regular Supplier = 20 days
-Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.75%)
-→ Total Cost = $13,828.80
-
-Simulation 5 (365 Days)
-Total Yearly Demand = 808 units
+Total Yearly Demand = 544 units
 Max Delay for Regular Supplier = 21 days
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.50%)
-→ Total Cost = $15,606.20
+→ Stockout occurred (Fill Rate: 99.45%)
+→ Total Cost = $9,971.00
+
+Simulation 2 (365 Days)
+Total Yearly Demand = 549 units
+Max Delay for Regular Supplier = 23 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 99.09%)
+→ Total Cost = $10,947.40
+
+Simulation 3 (365 Days)
+Total Yearly Demand = 558 units
+Max Delay for Regular Supplier = 18 days
+Max Delay for Emergency Supplier = 2.0 days
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,821.80
+
+Simulation 4 (365 Days)
+Total Yearly Demand = 603 units
+Max Delay for Regular Supplier = 17 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 99.34%)
+→ Total Cost = $11,751.00
+
+Simulation 5 (365 Days)
+Total Yearly Demand = 523 units
+Max Delay for Regular Supplier = 25 days
+Max Delay for Emergency Supplier = 2.0 days
+→ Stockout occurred (Fill Rate: 99.81%)
+→ Total Cost = $10,112.00
 
 === PLAN: 0% Regular / 100% Emergency ===
 
 Simulation 1 (365 Days)
-Total Yearly Demand = 800 units
+Total Yearly Demand = 541 units
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.50%)
-→ Total Cost = $16,497.30
+→ Stockout occurred (Fill Rate: 99.63%)
+→ Total Cost = $10,628.40
 
 Simulation 2 (365 Days)
-Total Yearly Demand = 821 units
+Total Yearly Demand = 623 units
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.15%)
-→ Total Cost = $16,643.00
+→ Stockout occurred (Fill Rate: 98.72%)
+→ Total Cost = $12,630.60
 
 Simulation 3 (365 Days)
-Total Yearly Demand = 834 units
+Total Yearly Demand = 544 units
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.04%)
-→ Total Cost = $16,862.90
+→ No stockouts occurred (100% Fill Rate)
+→ Total Cost = $10,607.20
 
 Simulation 4 (365 Days)
-Total Yearly Demand = 768 units
+Total Yearly Demand = 609 units
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 99.61%)
-→ Total Cost = $14,679.70
+→ Stockout occurred (Fill Rate: 98.52%)
+→ Total Cost = $12,712.00
 
 Simulation 5 (365 Days)
-Total Yearly Demand = 742 units
+Total Yearly Demand = 568 units
 Max Delay for Emergency Supplier = 2.0 days
-→ Stockout occurred (Fill Rate: 98.25%)
-→ Total Cost = $15,103.30
+→ Stockout occurred (Fill Rate: 99.30%)
+→ Total Cost = $11,720.60
 

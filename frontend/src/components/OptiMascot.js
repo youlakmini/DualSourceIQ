@@ -57,10 +57,10 @@ function OptiMascot({ activeTab, simLoading }) {
       "Filter by 'Next 30 Days' or 'All History' to inspect seasonal demand patterns."
     ],
     rsrf: [
-      "Welcome to Contribution D: The Risk–Service Recovery Frontier (RSRF)!",
-      "The solid blue curve represents your non-dominated Pareto frontier between Cost and Fill Rate.",
-      "Toggle between Normal, Moderate, and Severe delays to see the required recovery cost (ΔC).",
-      "Notice how the green dot shows the optimal allocation restoring your 95% service target!"
+      "Welcome to Disruption Recovery! Here you can plan the fastest, least-cost supplier shift under delays.",
+      "The blue curve represents your optimal sourcing boundary between operating cost and customer fill rate.",
+      "Toggle between Normal, Moderate, and Severe delays to evaluate the extra expediting spend needed.",
+      "The green dot highlights your recommended action to safeguard shelf availability!"
     ],
     reports: [
       "Audit & compliance ready! Export your simulation and forecast runs to CSV.",

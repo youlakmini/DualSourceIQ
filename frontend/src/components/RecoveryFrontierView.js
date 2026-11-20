@@ -4,6 +4,7 @@ function RecoveryFrontierView({ inventory }) {
   const [selectedSku, setSelectedSku] = useState('');
   const [minServiceLevel, setMinServiceLevel] = useState(0.95);
   const [activeSeverity, setActiveSeverity] = useState('severe'); // 'normal' | 'moderate' | 'severe'
+  const [showCandidates, setShowCandidates] = useState(true);
   const [frontierData, setFrontierData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -141,17 +142,17 @@ function RecoveryFrontierView({ inventory }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Service Target (F<sub>min</sub>):</label>
+              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Minimum Required Service:</label>
               <select
                 className="form-select"
                 value={minServiceLevel}
                 onChange={(e) => setMinServiceLevel(parseFloat(e.target.value))}
-                style={{ width: '110px', padding: '4px 8px' }}
+                style={{ width: '105px', padding: '4px 8px' }}
               >
-                <option value="0.90">90.0%</option>
-                <option value="0.95">95.0%</option>
-                <option value="0.98">98.0%</option>
-                <option value="0.99">99.0%</option>
+                <option value="0.90">90% Target</option>
+                <option value="0.95">95% Target</option>
+                <option value="0.98">98% Target</option>
+                <option value="0.99">99% Target</option>
               </select>
             </div>
 
@@ -225,7 +226,7 @@ function RecoveryFrontierView({ inventory }) {
               background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)'
             }}
           >
-            <span>{loading ? 'Crunching Frontiers...' : '⚡ Recompute RSRF'}</span>
+            <span>{loading ? 'Evaluating Scenarios...' : '⚡ Recompute Strategy'}</span>
           </button>
         </div>
       </div>
@@ -237,25 +238,35 @@ function RecoveryFrontierView({ inventory }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', flexShrink: 0 }}>
             <div>
               <h3 className="card-title" style={{ margin: 0, fontSize: '15px' }}>
-                Risk–Service Recovery Frontier (RSRF)
+                Disruption Recovery &amp; Supplier Reallocation
               </h3>
               <p className="card-subtitle" style={{ margin: '2px 0 0 0', fontSize: '11.5px' }}>
-                Multi-objective non-dominated trade-offs under <strong>{currentScenario?.metadata?.name || 'Selected Delay'}</strong>
+                Fastest, least-cost supplier shift to prevent empty shelves under <strong>{currentScenario?.metadata?.name || 'supply delays'}</strong>.
               </p>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '11px', color: '#64748b' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#2563eb', display: 'inline-block' }}></span>
-                Pareto Frontier
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11px', color: '#64748b', flexWrap: 'wrap' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Other efficient cost vs fill rate trade-offs along the boundary">
+                <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#2563eb', display: 'inline-block' }}></span>
+                Curve Options (Blue)
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#94a3b8', display: 'inline-block' }}></span>
-                Dominated Plan
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Your pre-disruption 90/10 operational split">
+                <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#f59e0b', display: 'inline-block' }}></span>
+                Baseline (Amber)
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="The single best split meeting your minimum service target at lowest cost">
                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
-                Recovery Plan (x*)
+                Recommended (Green)
               </span>
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'pointer', userSelect: 'none', margin: 0 }} title="Toggle visibility of discarded sub-optimal candidate allocations">
+                <input
+                  type="checkbox"
+                  checked={showCandidates}
+                  onChange={(e) => setShowCandidates(e.target.checked)}
+                  style={{ width: '12px', height: '12px', cursor: 'pointer', margin: 0 }}
+                />
+                <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#94a3b8', display: 'inline-block', opacity: 0.7 }}></span>
+                Sub-Optimal Candidates
+              </label>
             </div>
           </div>
 
@@ -320,7 +331,7 @@ function RecoveryFrontierView({ inventory }) {
                   );
                 })}
 
-                {/* Target Service Level Threshold Line (F_min) */}
+                {/* Target Service Level Threshold Line */}
                 <line
                   x1={getX(minServiceLevel)}
                   y1={padding.top}
@@ -338,10 +349,10 @@ function RecoveryFrontierView({ inventory }) {
                   fontWeight="bold"
                   textAnchor="end"
                 >
-                  Target {Math.round(minServiceLevel * 100)}%
+                  Min Required ({Math.round(minServiceLevel * 100)}%)
                 </text>
 
-                {/* Pareto Frontier Line Curve */}
+                {/* Optimal Sourcing Curve Line */}
                 {paretoPathStr && (
                   <path
                     d={paretoPathStr}
@@ -354,22 +365,22 @@ function RecoveryFrontierView({ inventory }) {
                   />
                 )}
 
-                {/* Render Dominated Candidate Points */}
-                {allPoints.filter(p => !p.is_pareto).map((p, idx) => (
+                {/* Render Candidate Points (Sub-Optimal Splits, dim background) */}
+                {showCandidates && allPoints.filter(p => !p.is_pareto).map((p, idx) => (
                   <circle
                     key={`dom-${idx}`}
                     cx={getX(p.expected_fill_rate)}
                     cy={getY(p.expected_cost)}
-                    r="4"
+                    r="3.5"
                     fill="#94a3b8"
-                    opacity="0.5"
-                    style={{ cursor: 'pointer' }}
+                    opacity="0.22"
+                    style={{ cursor: 'pointer', transition: 'all 0.15s' }}
                     onMouseEnter={() => setHoveredPoint(p)}
                     onMouseLeave={() => setHoveredPoint(null)}
                   />
                 ))}
 
-                {/* Render Pareto-Optimal Frontier Points */}
+                {/* Render Optimal Frontier Points */}
                 {paretoPoints.map((p, idx) => {
                   const isRecovery = recoverySummary?.recovery_plan?.emergency_ratio === p.emergency_ratio;
                   const isBaseline = recoverySummary?.baseline?.emergency_ratio === p.emergency_ratio;
@@ -427,32 +438,63 @@ function RecoveryFrontierView({ inventory }) {
               </svg>
             )}
 
-            {/* Hover Tooltip */}
-            {hoveredPoint && (
-              <div style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                background: 'rgba(15, 23, 42, 0.95)',
-                color: 'white',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                pointerEvents: 'none',
-                zIndex: 10
-              }}>
-                <div style={{ fontWeight: 700, color: '#38bdf8', marginBottom: '3px' }}>{hoveredPoint.label}</div>
-                <div>Fill Rate: <strong>{hoveredPoint.fill_rate_pct}%</strong></div>
-                <div>Expected Cost: <strong>${hoveredPoint.expected_cost.toLocaleString()}</strong></div>
-                <div>Cost CVaR (95%): <strong>${hoveredPoint.cvar.toLocaleString()}</strong></div>
-                <div>Status: <span style={{ color: hoveredPoint.is_pareto ? '#4ade80' : '#cbd5e1' }}>{hoveredPoint.is_pareto ? 'Pareto Optimal' : 'Dominated'}</span></div>
-              </div>
-            )}
+            {/* Hover Tooltip with Clear Distinction of Roles */}
+            {hoveredPoint && (() => {
+              const isRecovery = recoverySummary?.recovery_plan?.emergency_ratio === hoveredPoint.emergency_ratio;
+              const isBaseline = recoverySummary?.baseline?.emergency_ratio === hoveredPoint.emergency_ratio;
+
+              let roleTitle = 'Sub-Optimal Candidate';
+              let roleColor = '#94a3b8';
+              let roleExplanation = 'Inefficient split: delivers lower service for higher cost.';
+
+              if (isRecovery) {
+                roleTitle = '🎯 Recommended Action (Best Target Match)';
+                roleColor = '#4ade80';
+                roleExplanation = `Selected plan: satisfies ≥${Math.round(minServiceLevel * 100)}% service target at the lowest expediting spend.`;
+              } else if (isBaseline) {
+                roleTitle = '📦 Current Baseline (Pre-Disruption)';
+                roleColor = '#fbbf24';
+                roleExplanation = 'Your pre-disruption 90/10 operational split before volume shifting.';
+              } else if (hoveredPoint.is_pareto) {
+                roleTitle = '📈 Alternative Curve Option';
+                roleColor = '#38bdf8';
+                roleExplanation = hoveredPoint.expected_fill_rate < minServiceLevel
+                  ? `Efficient, but falls short of your ${Math.round(minServiceLevel * 100)}% service target.`
+                  : 'Efficient, but incurs higher expediting costs than necessary.';
+              }
+
+              return (
+                <div style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'rgba(15, 23, 42, 0.96)',
+                  color: 'white',
+                  padding: '9px 12px',
+                  borderRadius: '6px',
+                  fontSize: '11px',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
+                  pointerEvents: 'none',
+                  zIndex: 10,
+                  maxWidth: '260px'
+                }}>
+                  <div style={{ fontWeight: 700, color: '#38bdf8', marginBottom: '3px' }}>{hoveredPoint.label}</div>
+                  <div>Fill Rate: <strong>{hoveredPoint.fill_rate_pct}%</strong></div>
+                  <div>Expected Cost: <strong>${hoveredPoint.expected_cost.toLocaleString()}</strong></div>
+                  <div>Cost CVaR (95%): <strong>${hoveredPoint.cvar.toLocaleString()}</strong></div>
+                  <div style={{ marginTop: '5px', paddingTop: '5px', borderTop: '1px solid rgba(255,255,255,0.15)' }}>
+                    Role: <strong style={{ color: roleColor }}>{roleTitle}</strong>
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#cbd5e1', marginTop: '2px', lineHeight: 1.35 }}>
+                    {roleExplanation}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
-          <div style={{ fontSize: '10.5px', color: '#64748b', marginTop: '4px', borderTop: '1px solid #f1f5f9', paddingTop: '4px' }}>
-            <strong>Contribution D Note:</strong> Points strictly on the solid blue line represent non-dominated allocations. Gray points are mathematically dominated and discarded.
+          <div style={{ fontSize: '11px', color: '#475569', marginTop: '4px', borderTop: '1px solid #f1f5f9', paddingTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>💡 <strong>Takeaway:</strong> Points on the blue line deliver the highest service level for the lowest operational cost.</span>
           </div>
         </div>
 
@@ -460,10 +502,10 @@ function RecoveryFrontierView({ inventory }) {
         <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '8px 12px', overflow: 'hidden' }}>
           <div style={{ flexShrink: 0, marginBottom: '5px' }}>
             <h3 className="card-title" style={{ margin: 0, fontSize: '14px' }}>
-              Constrained Recovery Decision
+              Optimal Recovery Action
             </h3>
             <p className="card-subtitle" style={{ margin: '1px 0 0 0', fontSize: '10.5px' }}>
-              Optimal allocation to restore service under <strong>{currentScenario?.metadata?.name}</strong>
+              Actionable supplier shift to maintain shelf availability under <strong>{currentScenario?.metadata?.name}</strong>
             </p>
           </div>
 
@@ -486,7 +528,7 @@ function RecoveryFrontierView({ inventory }) {
             </div>
 
             <div style={{ padding: '5px 6px', background: '#eff6ff', borderRadius: '5px', border: '1px solid #bfdbfe' }}>
-              <span style={{ fontSize: '8.5px', color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Recovery (&Delta;C)</span>
+              <span style={{ fontSize: '8.5px', color: '#1e40af', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Additional Spend (&Delta;C)</span>
               <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: '#2563eb' }}>
                 {recoverySummary?.recovery_cost_premium !== null && recoverySummary?.recovery_cost_premium !== undefined
                   ? recoverySummary.recovery_cost_premium === 0
@@ -494,17 +536,26 @@ function RecoveryFrontierView({ inventory }) {
                     : `+$${recoverySummary.recovery_cost_premium.toLocaleString()}`
                   : 'N/A'}
               </h3>
-              <span style={{ fontSize: '8.5px', color: '#1e40af', display: 'block', whiteSpace: 'nowrap' }}>Emergency spend</span>
+              <span style={{ fontSize: '8.5px', color: '#1e40af', display: 'block', whiteSpace: 'nowrap' }} title="Extra cost to expedite orders">
+                Extra cost to expedite
+              </span>
             </div>
 
-            <div style={{ padding: '5px 6px', background: '#f8fafc', borderRadius: '5px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '8.5px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Penalty Avoided</span>
+            <div 
+              style={{ padding: '5px 6px', background: '#f8fafc', borderRadius: '5px', border: '1px solid #e2e8f0', cursor: 'help' }}
+              title="Disaster penalties and lost sales prevented by shifting volume."
+            >
+              <span style={{ fontSize: '8.5px', color: '#64748b', fontWeight: 600, textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Shortage Loss Avoided
+              </span>
               <h3 style={{ margin: '1px 0 0 0', fontSize: '14px', fontWeight: 700, color: '#16a34a' }}>
                 {recoverySummary?.penalty_avoided
                   ? `-$${Math.round(recoverySummary.penalty_avoided).toLocaleString()}`
                   : '$0.00'}
               </h3>
-              <span style={{ fontSize: '8.5px', color: '#64748b', display: 'block', whiteSpace: 'nowrap' }}>Shortage avoided</span>
+              <span style={{ fontSize: '8.5px', color: '#64748b', display: 'block', whiteSpace: 'nowrap' }}>
+                Penalties prevented ℹ️
+              </span>
             </div>
           </div>
 
@@ -529,7 +580,7 @@ function RecoveryFrontierView({ inventory }) {
           {/* 3-Tier Delay Severity Comparison Table (Fixed Fit, No Scrolling Needed) */}
           <div style={{ flexShrink: 0, marginBottom: '2px' }}>
             <h4 style={{ margin: 0, fontSize: '11px', fontWeight: 700, color: '#0f172a' }}>
-              Cross-Severity Resilience Table
+              Disruption Scenario Comparison
             </h4>
           </div>
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '5px', overflow: 'hidden', flexShrink: 0 }}>
@@ -540,7 +591,7 @@ function RecoveryFrontierView({ inventory }) {
                   <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Baseline</th>
                   <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Recovery Plan</th>
                   <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Restored</th>
-                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }}>Premium (&Delta;C)</th>
+                  <th style={{ padding: '3.5px 6px', fontSize: '10px' }} title="Extra cost to expedite orders">Extra Spend (&Delta;C)</th>
                 </tr>
               </thead>
               <tbody>
@@ -590,7 +641,7 @@ function RecoveryFrontierView({ inventory }) {
           </div>
 
           <div style={{ marginTop: '4px', fontSize: '9px', color: '#64748b', flexShrink: 0 }}>
-            💡 <em>Click any row above to inspect its Pareto curve on the left.</em>
+            💡 <em>Click any row above to inspect its optimal curve on the left.</em>
           </div>
         </div>
       </div>

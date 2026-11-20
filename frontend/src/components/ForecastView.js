@@ -133,7 +133,7 @@ function ForecastView({ onTestInWhatIf }) {
 
   // Export forecast to CSV
   const handleExportCSV = () => {
-    const headers = ["Period", "Product_SKU", "Product_Name", "Category", "XGBoost_Forecast_Units", "Actual_Units", "Lower_Bound_95", "Upper_Bound_95", "Model_Accuracy_Pct"];
+    const headers = ["Period", "Product_SKU", "Product_Name", "Category", "Forecast_Units", "Actual_Units", "Min_Range_Units", "Max_Range_Units", "Model_Accuracy_Pct"];
     const rows = forecastData.map(d => [
       d.label,
       currentProduct.sku,
@@ -203,7 +203,7 @@ function ForecastView({ onTestInWhatIf }) {
   const actualPathStr = actualPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: 'calc(100vh - 120px)', minHeight: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', height: '100%', flex: 1, minHeight: 0, overflow: 'hidden' }}>
       {/* Top Compact Filter Bar */}
       <div className="dashboard-card" style={{ padding: '10px 16px', flexShrink: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
@@ -239,44 +239,45 @@ function ForecastView({ onTestInWhatIf }) {
               </select>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <label className="form-label" style={{ margin: 0, fontWeight: 600 }}>Horizon:</label>
-              <select 
-                className="form-select" 
-                value={period} 
-                onChange={(e) => setPeriod(e.target.value)}
-                style={{ width: '160px', padding: '4px 8px' }}
-              >
-                <option value="8_weeks">Next 8 Weeks (W1-W8)</option>
-                <option value="12_weeks">Next 12 Weeks (Quarter)</option>
-                <option value="4_weeks">Next 4 Weeks (Month)</option>
-                <option value="30_days">Next 30 Days (Daily)</option>
-                <option value="7_days">Next 7 Days (Week)</option>
-              </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <label className="form-label" style={{ margin: 0, fontWeight: 600, fontSize: '12px', color: '#475569' }}>Horizon:</label>
+              <div style={{ display: 'inline-flex', gap: '3px', backgroundColor: '#f1f5f9', padding: '3px', borderRadius: '7px' }}>
+                {[
+                  { value: '30_days', label: 'Next 30 Days' },
+                  { value: '4_weeks', label: 'Next 4 Weeks' },
+                  { value: '8_weeks', label: 'Next 8 Weeks' },
+                  { value: '12_weeks', label: 'Full Quarter' }
+                ].map(opt => {
+                  const isActive = period === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setPeriod(opt.value)}
+                      style={{
+                        padding: '4px 10px',
+                        fontSize: '11.5px',
+                        fontWeight: isActive ? 600 : 500,
+                        borderRadius: '5px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        backgroundColor: isActive ? '#2563eb' : 'transparent',
+                        color: isActive ? '#ffffff' : '#475569',
+                        boxShadow: isActive ? '0 1px 3px rgba(37,99,235,0.25)' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 12px', fontSize: '12px' }} title="Download CSV">
+            <button className="btn-secondary" onClick={handleExportCSV} style={{ padding: '5px 12px', fontSize: '12px' }} title="Download Forecast Data CSV">
               <span>📥 Export CSV</span>
-            </button>
-            <button 
-              className="btn-primary" 
-              onClick={handleRunWhatIf} 
-              style={{ 
-                padding: '5px 13px', 
-                fontSize: '12px', 
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                boxShadow: '0 2px 5px rgba(37, 99, 235, 0.25)',
-                cursor: 'pointer'
-              }} 
-              title={`Test ${currentProduct.name} in What-If Sourcing Analysis with ${trendPct >= 0 ? '+' : ''}${trendPct}% forecasted demand surge`}
-            >
-              <span>⚡ Stress-Test in What-If Analysis ({trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`}) →</span>
             </button>
           </div>
         </div>
@@ -464,9 +465,70 @@ function ForecastView({ onTestInWhatIf }) {
             </svg>
           </div>
 
-          {/* Integration Note */}
-          <div style={{ padding: '8px 12px', backgroundColor: '#eff6ff', borderRadius: '6px', borderLeft: '3px solid #2563eb', fontSize: '11.5px', color: '#1e40af', marginTop: 'auto' }}>
-            <strong>Integration Note:</strong> This XGBoost forecast supplies the <strong>Base Expected Demand</strong> &amp; <strong>Error Variance (&sigma;&sup2;)</strong> to the Monte Carlo Risk Simulation.
+          {/* Executive Summary Takeaway & Seamless Action Card */}
+          <div style={{
+            padding: '10px 14px',
+            background: trendPct >= 0 
+              ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' 
+              : 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+            borderRadius: '8px',
+            border: trendPct >= 0 ? '1px solid #86efac' : '1px solid #fca5a5',
+            marginTop: 'auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexShrink: 0
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <strong style={{ fontSize: '12px', color: trendPct >= 0 ? '#15803d' : '#b91c1c' }}>
+                  📈 Demand Outlook:
+                </strong>
+                <span style={{ fontSize: '12px', color: trendPct >= 0 ? '#166534' : '#991b1b', fontWeight: 600 }}>
+                  Demand is projected to {trendPct >= 0 ? `rise by +${trendPct}%` : `soften by ${trendPct}%`} over the {
+                    period === '8_weeks' ? 'next 8 weeks' :
+                    period === '12_weeks' ? 'quarter' :
+                    period === '4_weeks' ? 'next 4 weeks' : 'next 30 days'
+                  }. Expected run rate: {averageWeekly.toLocaleString()} units/{period.includes('day') ? 'day' : 'week'}.
+                </span>
+                <span style={{ fontSize: '10px', color: '#166534', background: '#ffffff', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, border: '1px solid #86efac', whiteSpace: 'nowrap' }}>
+                  ✓ {avgAccuracy}% Verified
+                </span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#475569' }}>
+                {trendPct >= 0 ? (
+                  <span>
+                    💡 <strong>Sourcing Impact:</strong> Projected demand is accelerating. Click to test if your current supplier contracts and backup buffer can handle this surge.
+                  </span>
+                ) : (
+                  <span>
+                    💡 <strong>Sourcing Impact:</strong> Projected demand is easing. Click to test adjusting order splits to minimize holding costs.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <button 
+              className="btn-primary" 
+              onClick={handleRunWhatIf} 
+              style={{ 
+                padding: '7px 13px', 
+                fontSize: '11.5px', 
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                boxShadow: '0 2px 5px rgba(37, 99, 235, 0.25)',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
+              }} 
+              title={`Test ${currentProduct.name} in What-If Sourcing Analysis with ${trendPct >= 0 ? '+' : ''}${trendPct}% forecasted demand surge`}
+            >
+              <span>⚡ Stress-Test in What-If ({trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`}) →</span>
+            </button>
           </div>
         </div>
 
@@ -475,45 +537,52 @@ function ForecastView({ onTestInWhatIf }) {
           {/* 4 KPI Cards in a 2x2 grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px', flexShrink: 0 }}>
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Demand</span>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Forecast Demand</span>
               <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>
-                {totalForecastDemand.toLocaleString()} units
+                {totalForecastDemand.toLocaleString()} <span style={{ fontSize: '12px', fontWeight: '500', color: '#64748b' }}>units</span>
               </h3>
-              <span style={{ fontSize: '10.5px', color: '#2563eb', fontWeight: '500' }}>Horizon Demand</span>
+              <span style={{ fontSize: '10.5px', color: '#2563eb', fontWeight: '500' }}>Total Horizon Demand</span>
             </div>
 
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Average Weekly</span>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                {period.includes('day') ? 'Average Daily' : 'Average Weekly'}
+              </span>
               <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#0f172a' }}>
-                {averageWeekly.toLocaleString()} units
+                {averageWeekly.toLocaleString()} <span style={{ fontSize: '12px', fontWeight: '500', color: '#64748b' }}>units</span>
               </h3>
               <span style={{ fontSize: '10.5px', color: '#64748b' }}>Velocity run-rate</span>
             </div>
 
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Demand Trend</span>
-              <h3 style={{ margin: '3px 0 1px 0', fontSize: '16.5px', fontWeight: '700', color: trendPct >= 0 ? '#166534' : '#b91c1c' }}>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Demand Trend</span>
+              <h3 style={{ margin: '3px 0 1px 0', fontSize: '17px', fontWeight: '700', color: trendPct >= 0 ? '#166534' : '#b91c1c' }}>
                 {trendPct >= 0 ? 'Increasing ↗' : 'Decreasing ↘'}
               </h3>
               <span style={{ fontSize: '10.5px', color: trendPct >= 0 ? '#16a34a' : '#ef4444', fontWeight: '500' }}>
-                {trendPct >= 0 ? `+${trendPct}%` : `${trendPct}%`} over horizon
+                {trendPct >= 0 ? `+${trendPct}% projected growth` : `${trendPct}% projected drop`}
               </span>
             </div>
 
             <div style={{ padding: '10px 12px', backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
-              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase' }}>Forecast Accuracy</span>
+              <span style={{ fontSize: '10.5px', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Forecast Accuracy</span>
               <h3 style={{ margin: '3px 0 1px 0', fontSize: '18px', fontWeight: '700', color: '#2563eb' }}>
                 {avgAccuracy}%
               </h3>
-              <span style={{ fontSize: '10.5px', color: '#64748b' }}>XGBoost Fit</span>
+              <span style={{ fontSize: '10.5px', color: '#64748b' }}>Confidence Score</span>
             </div>
           </div>
 
           {/* Table Breakdown (Scrolls internally inside right column) */}
-          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <h4 style={{ margin: '0 0 6px 0', fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>
-              Period-by-Period Breakdown
-            </h4>
+          <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexShrink: 0 }}>
+              <h4 style={{ margin: 0, fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>
+                Period-by-Period Breakdown
+              </h4>
+              <span style={{ fontSize: '10.5px', color: '#64748b' }}>
+                Estimated Range Buffer
+              </span>
+            </div>
 
             <div style={{ flex: 1, overflowY: 'auto', border: '1px solid #f1f5f9', borderRadius: '6px' }}>
               <table className="modern-table">
@@ -522,18 +591,32 @@ function ForecastView({ onTestInWhatIf }) {
                     <th>Period</th>
                     <th>Forecast</th>
                     <th>Actual</th>
-                    <th>Lower 95%</th>
-                    <th>Upper 95%</th>
+                    <th>Likely Range (Min – Max)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {forecastData.map((d, idx) => (
                     <tr key={idx}>
                       <td style={{ fontWeight: '600' }}>{d.label}</td>
-                      <td><strong>{d.forecast}</strong></td>
-                      <td>{d.actual !== null ? d.actual : <span style={{ color: '#94a3b8' }}>Upcoming</span>}</td>
-                      <td>{d.lowerBound}</td>
-                      <td>{d.upperBound}</td>
+                      <td>
+                        <strong>{d.forecast.toLocaleString()}</strong>{' '}
+                        <span style={{ fontSize: '10.5px', color: '#64748b' }}>units</span>
+                      </td>
+                      <td>
+                        {d.actual !== null ? (
+                          <span>
+                            {d.actual.toLocaleString()}{' '}
+                            <span style={{ fontSize: '10.5px', color: '#64748b' }}>units</span>
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '10.5px', color: '#64748b', background: '#f1f5f9', padding: '2px 7px', borderRadius: '4px', fontWeight: 500 }}>
+                            Upcoming
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ fontFamily: 'monospace', fontSize: '11.5px', color: '#334155' }}>
+                        {d.lowerBound.toLocaleString()} &ndash; {d.upperBound.toLocaleString()} units
+                      </td>
                     </tr>
                   ))}
                 </tbody>
